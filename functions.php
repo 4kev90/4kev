@@ -5,16 +5,16 @@ $top_message ="<p></p>";
 
 function connect_to_database() {
     $servername = "xxxx";
-    $username = "xxxx";
-    $password = "xxxx";
-    $mydb = "xxxx";
+    $username   = "xxxx";
+    $password   = "xxxx";
+    $mydb       = "xxxx";
     return mysqli_connect($servername, $username, $password, $mydb);
-    }
+}
 
 function makePwd($length = 8) {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $characters       = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
-    $randomString = '';
+    $randomString     = '';
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
@@ -22,9 +22,9 @@ function makePwd($length = 8) {
 }
 
 function makeFileName($length = 13) {
-    $characters = '0123456789';
+    $characters       = '0123456789';
     $charactersLength = strlen($characters);
-    $randomString = '';
+    $randomString     = '';
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
@@ -49,45 +49,43 @@ function checkYoutube($word) {
 
 function wordFilter($word) {
     if(strpos($word, 'nigger') !== false)
-        $word = str_replace("nigger","brony",$word);
+        $word = str_replace("nigger", "brony", $word);
     elseif(strpos($word, 'NIGGER') !== false)
-        $word = str_replace("NIGGER","BRONY",$word);
+        $word = str_replace("NIGGER", "BRONY", $word);
     elseif(strpos($word, 'faggot') !== false)
-        $word = str_replace("faggot","juggalo",$word);
+        $word = str_replace("faggot", "juggalo", $word);
     elseif(strpos($word, 'FAGGOT') !== false)
-        $word = str_replace("FAGGOT","JUGGALO",$word);
+        $word = str_replace("FAGGOT", "JUGGALO", $word);
 
     return $word;
 }
 
 function boardList() {
-echo '<div style="clear:both; background-color:#17202a">
-<hr>
-<p style="text-align:center;">
-
-<A href="http://4kev.org/boards/random.php">random</A> |
-<A href="http://4kev.org/boards/technology.php">technology</A> |
-<A href="http://4kev.org/boards/politics.php">politics</A> |
-<A href="http://4kev.org/boards/videogames.php">videogames</A> | 
-<A href="http://4kev.org/boards/music.php">music</A> | 
-<A href="http://4kev.org/boards/anime.php">anime</A> |
-<A href="http://4kev.org/boards/feels.php">feels</A> |
-<A href="http://4kev.org/boards/cyberpunk.php">cyberpunk</A> 
-
-</p>
-<hr>
-</div>
-';
+echo    '<div style="clear:both; background-color:#17202a">
+            <hr>
+            <p style="text-align: center;">
+                <a href="http://4kev.org/boards/random.php">random</a> |
+                <a href="http://4kev.org/boards/technology.php">technology</a> |
+                <a href="http://4kev.org/boards/politics.php">politics</a> |
+                <a href="http://4kev.org/boards/videogames.php">videogames</a> | 
+                <a href="http://4kev.org/boards/music.php">music</a> | 
+                <a href="http://4kev.org/boards/anime.php">anime</a> |
+                <a href="http://4kev.org/boards/feels.php">feels</a> |
+                <a href="http://4kev.org/boards/cyberpunk.php">cyberpunk</a> 
+            </p>
+            <hr>
+            </div>
+        ';
 }
 
 function my_hash_equals($str1, $str2) {
     if(strlen($str1) != strlen($str2)) {
-      return false;
+        return false;
     } else {
-      $res = $str1 ^ $str2;
-      $ret = 0;
-      for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
-      return !$ret;
+        $res = $str1 ^ $str2;
+        $ret = 0;
+        for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+        return !$ret;
     }
 }
 
