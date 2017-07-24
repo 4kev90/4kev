@@ -33,49 +33,62 @@ function makeFileName($length = 13) {
 
 function checkYoutube($word) {
     if(strpos($word, 'www.youtube.com/watch') !== false) {
+      //make sure that word doesn't contain multiple urls
+      if(substr_count($word, 'http') == 1) {
         $randomID = rand(0, 300000);
+        $randomID2= rand(0, 300000);
         echo $word;
-        echo " [<A onclick='ytvid($randomID)' class='embed'>embed</A>]";
-        echo "<br>";
         $word = str_replace("watch?v=","embed/", $word);
-        $word = "<iframe class='hidevideo' id='$randomID' src='$word' width='560' height='315' frameborder='0' allowfullscreen></iframe>";
+        $link = "<iframe src='$word' width='560' height='315' frameborder='0' allowfullscreen></iframe>";
+        echo " [<A onclick='ytvid($randomID, $randomID2)' class='embed'>embed</A>]<br>";
+        $word = "<div id=$randomID class='hidevideo'></div>";
+        echo "<div style='display:none' id=$randomID2>$link</div>";
+      }
     }
     if(strpos($word, 'https://youtu.be') !== false) {
+      //make sure that word doesn't contain multiple urls
+      if(substr_count($word, 'http') == 1) {
+        $randomID = rand(0, 300000);
+        $randomID2= rand(0, 300000);
+        echo $word;
         $word = str_replace("youtu.be","www.youtube.com/embed", $word);
-        $word = "<iframe src='$word' width='560' height='315' frameborder='0' allowfullscreen></iframe>";
+        $link = "<iframe src='$word' width='560' height='315' frameborder='0' allowfullscreen></iframe>";
+        echo " [<A onclick='ytvid($randomID, $randomID2)' class='embed'>embed</A>]<br>";
+        $word = "<div id=$randomID class='hidevideo'></div>";
+        echo "<div style='display:none' id=$randomID2>$link</div>";
+      }
     }
     return $word;
 }
 
 function wordFilter($word) {
-    if(strpos($word, 'nigger') !== false)
-        $word = str_replace("nigger", "brony", $word);
-    elseif(strpos($word, 'NIGGER') !== false)
-        $word = str_replace("NIGGER", "BRONY", $word);
-    elseif(strpos($word, 'faggot') !== false)
-        $word = str_replace("faggot", "juggalo", $word);
-    elseif(strpos($word, 'FAGGOT') !== false)
-        $word = str_replace("FAGGOT", "JUGGALO", $word);
-
+    if(strpos(strtolower($word), 'nigger') !== false)
+        $word = str_replace("nigger","brony",strtolower($word));
+    if(strpos(strtolower($word), 'faggot') !== false)
+        $word = str_replace("faggot","juggalo",strtolower($word));
+ 
     return $word;
 }
 
+
 function boardList() {
-echo    '<div style="clear:both; background-color:#17202a">
-            <hr>
-            <p style="text-align: center;">
-                <a href="http://4kev.org/boards/random.php">random</a> |
-                <a href="http://4kev.org/boards/technology.php">technology</a> |
-                <a href="http://4kev.org/boards/politics.php">politics</a> |
-                <a href="http://4kev.org/boards/videogames.php">videogames</a> | 
-                <a href="http://4kev.org/boards/music.php">music</a> | 
-                <a href="http://4kev.org/boards/anime.php">anime</a> |
-                <a href="http://4kev.org/boards/feels.php">feels</a> |
-                <a href="http://4kev.org/boards/cyberpunk.php">cyberpunk</a> 
-            </p>
-            <hr>
-            </div>
-        ';
+echo '<div style="clear:both; background-color:#17202a">
+<hr>
+<p style="text-align:center;">
+
+<A href="http://4kev.org/boards.php?board=random">random</A> |
+<A href="http://4kev.org/boards.php?board=technology">technology</A> |
+<A href="http://4kev.org/boards.php?board=videogames">videogames</A> | 
+<A href="http://4kev.org/boards.php?board=music">music</A> | 
+<A href="http://4kev.org/boards.php?board=anime">anime</A> |
+<A href="http://4kev.org/boards.php?board=feels">feels</A> |
+<A href="http://4kev.org/boards.php?board=cyberpunk">cyberpunk</A> |
+<A href="http://4kev.org/boards.php?board=meta">meta</A> 
+
+</p>
+<hr>
+</div>
+';
 }
 
 function my_hash_equals($str1, $str2) {
