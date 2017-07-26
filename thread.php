@@ -10,6 +10,7 @@ $con = connect_to_database();
 //get thread number
 if($_GET['op']) {
     $op = $_GET['op'];
+    $op=(filter_var($op, FILTER_SANITIZE_NUMBER_INT));
     $sql = "SELECT * FROM posts WHERE ID = $op";
     $res = mysqli_query($con, $sql);
     while ($row = mysqli_fetch_assoc($res))
@@ -28,7 +29,7 @@ $bb = (mysqli_query($con, $aa) );
             $boardName = $row['board'];
 
 //check if user is a mod
-if( $_SESSION['ID'] == 11 || $_SESSION['ID'] == 6 || $_SESSION['ID'] == 7) 
+if( $_SESSION['ID'] == x || $_SESSION['ID'] == x || $_SESSION['ID'] == x) 
     $isMod = 1;
 
 //prepare variables to insert
@@ -58,6 +59,7 @@ if (strpos($comm, 'href') !== false) {
 //delete post
 if($_POST['delete'] && $isMod == 1) {
     $postDel = $_POST['delete'];
+    $postDel = str_replace("'", "", $postDel);
     $sql = "DELETE FROM posts WHERE ID = $postDel OR replyTo = $postDel";
     mysqli_query($con, $sql);
     //register action in actionMod
@@ -68,6 +70,7 @@ if($_POST['delete'] && $isMod == 1) {
 //report post
 if($_POST['report']) {
     $report = $_POST['report'];
+    $report = str_replace("'", "", $report);
     $sql = "INSERT INTO reports (post, ipAddress) VALUES ('$report','$ipAddr')";
     mysqli_query($con, $sql);
 }
@@ -111,16 +114,6 @@ if($comm) {
 
 //insert data into table
 if(($comm || $image) && ($q < $bumpLimit)) {
-  
-    //bump thread
-    if(strtolower($options) != "sage") {
-        $selectSQL = "SELECT ID FROM posts ORDER BY ID DESC LIMIT 1;";
-        $result = (mysqli_query($con, $selectSQL) );
-        while($row = mysqli_fetch_assoc( $result ))
-            $newBump = $row['ID'] + 1;
-        $updateSQL = "UPDATE posts SET bump=$newBump WHERE ID=$op;";
-        $result = (mysqli_query($con, $updateSQL) );
-    }
 
     //variables concerning image upload
     $oldName = basename($_FILES["fileToUpload"]["name"]);
@@ -130,9 +123,6 @@ if(($comm || $image) && ($q < $bumpLimit)) {
     $target_dir = "uploads/";
     $target_file = $target_dir . $newName;
     $uploadOk = 1;
-
-    $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, image, loggedIn) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$newName', '$loggedIn')";
-    mysqli_query($con, $sql);
 
     if($oldName) {
         //insert image into database
@@ -168,6 +158,21 @@ if(($comm || $image) && ($q < $bumpLimit)) {
                 //echo "Sorry, there was an error uploading your file.";
             }
         }
+    }
+
+    if($uploadOk == 1) {
+        $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, image, loggedIn) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$newName', '$loggedIn')";
+        mysqli_query($con, $sql);
+
+        //bump thread
+        if(strtolower($options) != "sage") {
+            $selectSQL = "SELECT ID FROM posts ORDER BY ID DESC LIMIT 1;";
+            $result = (mysqli_query($con, $selectSQL) );
+            while($row = mysqli_fetch_assoc( $result ))
+                $newBump = $row['ID'];
+            $updateSQL = "UPDATE posts SET bump=$newBump WHERE ID=$op;";
+            $result = (mysqli_query($con, $updateSQL) );
+    }
     }
 
 //redirect to same page
@@ -326,9 +331,9 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
             echo nl2br(" <font color='orange'><b style='cursor:pointer;' title='Registered User'>&#9733 </b></font> ");
 
         //select name color
-        if($row['options'] == 'bombastic')
+        if($row['options'] == 'xxxx')
             echo nl2br("<font color='red'><b> ");
-        else if($row['options'] == 'bombadmin')
+        else if($row['options'] == 'xxxx')
             echo nl2br("<font color='orange'><b> ");
         else
             echo nl2br("<font color='lawngreen'><b> ");

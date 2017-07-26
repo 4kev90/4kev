@@ -1,13 +1,14 @@
 <?php
-    include('functions.php');
 
-    //connect to database
-    $con = connect_to_database();
+include('functions.php');
 
-    $cle = $_GET['cle'];
+//connect to database
+$con = connect_to_database();
 
-    $sql = "UPDATE users SET confirmed = 1 WHERE cle = '$cle';";
-    $res = mysqli_query($con, $sql);
+$cle = $_GET['cle'];
+$cle = str_replace("'", "", $cle);
 
-    header("Location: index.php?err=4");
-?>
+$sql = "UPDATE users SET confirmed = 1 WHERE cle = '$cle';";
+$res = mysqli_query($con, $sql);
+
+header("Location: index.php?err=4");

@@ -26,7 +26,7 @@ if($_GET['board']) {
         $boardName == "anime"        ||
         $boardName == "random"       ||
         $boardName == "feels"        ||
-        $boardName == "meta"    ||
+        $boardName == "meta"         ||
         $boardName == "cyberpunk")
         $boardExists = 1;
     if($boardExists != 1)
@@ -36,7 +36,7 @@ else
     header('Location: http://4kev.org');
 
 //check if user is a mod
-if( $_SESSION['ID'] == 11 || $_SESSION['ID'] == 6 || $_SESSION['ID'] == 7) 
+if( $_SESSION['ID'] == x || $_SESSION['ID'] == x || $_SESSION['ID'] == x) 
     $isMod = 1;
 
 //prepare variables to insert into table
@@ -61,6 +61,7 @@ $image = basename($_FILES["fileToUpload"]["name"]);
 //delete post
 if($_POST['delete'] && $isMod == 1) {
     $postDel = $_POST['delete'];
+    $postDel = str_replace("'", "", $postDel);
     $sql = "DELETE FROM posts WHERE ID = $postDel OR replyTo = $postDel";
     mysqli_query($con, $sql);
     //register action in actionMod
@@ -71,6 +72,7 @@ if($_POST['delete'] && $isMod == 1) {
 //report post
 if($_POST['report']) {
     $report = $_POST['report'];
+    $report = str_replace("'", "", $report);
     $sql = "INSERT INTO reports (post, ipAddress) VALUES ('$report','$ipAddr')";
     mysqli_query($con, $sql);
 }
@@ -128,9 +130,6 @@ if($comm) {
     $uploadOk = 1;
 
 
-    $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn')";
-    mysqli_query($con, $sql);
-
     if($oldName) {
         //insert image into database
         // Check if image file is a actual image or fake image
@@ -166,7 +165,12 @@ if($comm) {
                 //echo "Sorry, there was an error uploading your file.";
             }
         }
-    }   
+    }
+
+    if(uploadOk == 1) {
+        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn')";
+        mysqli_query($con, $sql);   
+    }
 
 //redirect to same page
 header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
@@ -302,9 +306,9 @@ if($row['loggedIn'] == 1)
     echo nl2br(" <font color='orange'><b style='cursor:pointer;' title='Registered User'>&#9733</b></font> ");
 
 //select name color
-if($row['options'] == 'bombastic')
+if($row['options'] == 'xxxx')
     echo nl2br("<font color='red'><b> ");
-else if($row['options'] == 'bombadmin')
+else if($row['options'] == 'xxxx')
     echo nl2br("<font color='orange'><b> ");
 else
     echo nl2br("<font color='lawngreen'><b> ");
