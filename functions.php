@@ -1,5 +1,5 @@
 <?php
-
+//
 //message to display under the name of the board
 $top_message ="<p></p>";
 
