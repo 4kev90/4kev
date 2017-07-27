@@ -72,23 +72,20 @@ function wordFilter($word) {
 
 
 function boardList() {
-echo '<div style="clear:both; background-color:#17202a">
-<hr>
-<p style="text-align:center;">
-
-<A href="http://4kev.org/boards.php?board=random">random</A> |
-<A href="http://4kev.org/boards.php?board=technology">technology</A> |
-<A href="http://4kev.org/boards.php?board=videogames">videogames</A> | 
-<A href="http://4kev.org/boards.php?board=music">music</A> | 
-<A href="http://4kev.org/boards.php?board=anime">anime</A> |
-<A href="http://4kev.org/boards.php?board=feels">feels</A> |
-<A href="http://4kev.org/boards.php?board=cyberpunk">cyberpunk</A> |
-<A href="http://4kev.org/boards.php?board=meta">meta</A> 
-
-</p>
-<hr>
-</div>
-';
+echo    '<div style="clear:both; background-color:#17202a">
+            <hr>
+            <p style="text-align:center;">
+                <a href="boards.php?board=random">random</a> |
+                <a href="boards.php?board=technology">technology</a> |
+                <a href="boards.php?board=videogames">videogames</a> | 
+                <a href="boards.php?board=music">music</a> | 
+                <a href="boards.php?board=anime">anime</a> |
+                <a href="boards.php?board=feels">feels</a> |
+                <a href="boards.php?board=cyberpunk">cyberpunk</a> |
+                <a href="boards.php?board=meta">meta</a> 
+            </p>
+            <hr>
+        </div>';
 }
 
 function my_hash_equals($str1, $str2) {
