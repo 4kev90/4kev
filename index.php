@@ -63,7 +63,7 @@ else {
 
 <!--ERROR / CONFIRMATION MESSAGE -->
 <?php
-    $err = $_GET['err'];
+    $err = (isset($_GET['err'])) ? $_GET['err'] : 0;
     if($err == 1)
         echo '<table><td style="height:30px; background:lightgreen; border:1px solid darkgreen; border-spacing: 1px; padding: 3px;"><p>You will receive an activation email</p></td></table>';
     if($err == 2)

@@ -4,10 +4,10 @@
 $top_message ="<p></p>";
 
 function connect_to_database() {
-    $servername = "xxxx";
-    $username   = "xxxx";
-    $password   = "xxxx";
-    $mydb       = "xxxx";
+    $servername = "localhost";
+    $username   = "root";
+    $password   = "";
+    $mydb       = "4kev";
     return mysqli_connect($servername, $username, $password, $mydb);
 }
 

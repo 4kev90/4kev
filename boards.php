@@ -36,7 +36,7 @@ else
     header('Location: http://4kev.org');
 
 //check if user is a mod
-if( $_SESSION['ID'] == x || $_SESSION['ID'] == x || $_SESSION['ID'] == x) 
+if(isset($_SESSION['ID']) && ($_SESSION['ID'] == 123 || $_SESSION['ID'] == 123 || $_SESSION['ID'] == 123)) 
     $isMod = 1;
 
 //prepare variables to insert into table
