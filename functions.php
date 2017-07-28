@@ -1,5 +1,5 @@
 <?php
-
+//
 //message to display under the name of the board
 $top_message ="<p></p>";
 
@@ -72,17 +72,23 @@ function wordFilter($word) {
 
 
 function boardList() {
-echo '<div style="clear:both; background-color:#17202a">
+echo '<div style="clear:both; background-color:#17202a" id="boardlist">
 <hr>
-<p style="text-align:center;">
-
-<A href="http://4kev.org/boards.php?board=random">random</A> |
-<A href="http://4kev.org/boards.php?board=technology">technology</A> |
-<A href="http://4kev.org/boards.php?board=videogames">videogames</A> | 
-<A href="http://4kev.org/boards.php?board=music">music</A> | 
-<A href="http://4kev.org/boards.php?board=anime">anime</A> |
-<A href="http://4kev.org/boards.php?board=feels">feels</A> |
-<A href="http://4kev.org/boards.php?board=cyberpunk">cyberpunk</A> |
+<p style="text-align:center;" id="boardlist">
+<A href="http://4kev.org/boards.php?board=random">random</A> 
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=technology">technology</A>
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=videogames">videogames</A>
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=music">music</A>
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=anime">anime</A>
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=feels">feels</A>
+<div class="seperator">|</div>
+<A href="http://4kev.org/boards.php?board=cyberpunk">cyberpunk</A>
+<div class="seperator">|</div>
 <A href="http://4kev.org/boards.php?board=meta">meta</A> 
 
 </p>
