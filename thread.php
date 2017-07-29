@@ -3,6 +3,7 @@
 session_start();
 
 include('functions.php');
+include('connectToDatabase.php');
 
 //connect to database
 $con = connect_to_database();
@@ -10,14 +11,17 @@ $con = connect_to_database();
 //get thread number
 if($_GET['op']) {
     $op = $_GET['op'];
-    $op=(filter_var($op, FILTER_SANITIZE_NUMBER_INT));
-    $sql = "SELECT * FROM posts WHERE ID = $op";
-    $res = mysqli_query($con, $sql);
-    while ($row = mysqli_fetch_assoc($res))
-        if(!$row['replyTo'])
-            $threadExists = 1;
-    if($threadExists != 1)
-        header('Location: http://4kev.org');
+    $sql = $con->prepare("SELECT * FROM posts WHERE ID = ?");
+    $sql->bind_param('i', $op);
+    if($sql->execute()) {
+        $result = $sql->get_result();
+        while ($row = $result->fetch_assoc()) {
+            if(!$row['replyTo'])
+                $threadExists = 1;
+        }
+        if($threadExists != 1)
+            header('Location: http://4kev.org');
+    }
 }
 else
     header('Location: http://4kev.org');
@@ -29,8 +33,15 @@ $bb = (mysqli_query($con, $aa) );
             $boardName = $row['board'];
 
 //check if user is a mod
-if( $_SESSION['ID'] == x || $_SESSION['ID'] == x || $_SESSION['ID'] == x) 
-    $isMod = 1;
+$sessionID = $_SESSION['ID'];
+$sql = "SELECT * FROM users WHERE ID = $sessionID";
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+    if($row['isMod'] == 1)
+        $isMod = 1;
+    else if($row['isMod'] == 2)
+        $isMod = 2;
+}
 
 //prepare variables to insert
 //retrieve username
@@ -57,7 +68,7 @@ if (strpos($comm, 'href') !== false) {
 }
 
 //delete post
-if($_POST['delete'] && $isMod == 1) {
+if($_POST['delete'] && $isMod) {
     $postDel = $_POST['delete'];
     $postDel = str_replace("'", "", $postDel);
     $sql = "DELETE FROM posts WHERE ID = $postDel OR replyTo = $postDel";
@@ -116,10 +127,15 @@ if($comm) {
 if(($comm || $image) && ($q < $bumpLimit)) {
 
     //variables concerning image upload
+    $selectSQL = "SELECT ID FROM posts ORDER BY ID DESC LIMIT 1;";
+    $result = (mysqli_query($con, $selectSQL) );
+    while($row = mysqli_fetch_assoc( $result ))
+        $imageBaseName = $row['ID'];
+        $imageBaseName += 1;
     $oldName = basename($_FILES["fileToUpload"]["name"]);
     $imageFileType = pathinfo($oldName,PATHINFO_EXTENSION);
     if($oldName)
-        $newName = $newBump . "." . $imageFileType;
+        $newName = $imageBaseName . "." . $imageFileType;
     $target_dir = "uploads/";
     $target_file = $target_dir . $newName;
     $uploadOk = 1;
@@ -161,7 +177,7 @@ if(($comm || $image) && ($q < $bumpLimit)) {
     }
 
     if($uploadOk == 1) {
-        $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, image, loggedIn) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$newName', '$loggedIn')";
+        $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, image, loggedIn, isMod) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$newName', '$loggedIn', '$isMod')";
         mysqli_query($con, $sql);
 
         //bump thread
@@ -331,9 +347,9 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
             echo nl2br(" <font color='orange'><b style='cursor:pointer;' title='Registered User'>&#9733 </b></font> ");
 
         //select name color
-        if($row['options'] == 'xxxx')
+        if($row['isMod'] == 2)
             echo nl2br("<font color='red'><b> ");
-        else if($row['options'] == 'xxxx')
+        else if($row['isMod'] == 1)
             echo nl2br("<font color='orange'><b> ");
         else
             echo nl2br("<font color='lawngreen'><b> ");
@@ -347,7 +363,7 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
         echo "$rowName</b></font> {$row['dateTime']} No.<A class='quickReply'>{$row['ID']}</A> <a class='blue' onclick='showButton($hiddenButton)'>▶</a></p>";
 
         //show delete button if user is a mod, else show report button
-        if($isMod == 1)
+        if($isMod)
             echo "  <form id='$hiddenButton' style='display:none' action='#' method='post'>
                     <button type='submit' name='delete' value='{$row['ID']}'>Delete</button>
                     </form>";

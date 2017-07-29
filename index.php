@@ -2,6 +2,7 @@
 session_start();
 
 include('functions.php');
+include('connectToDatabase.php');
 
 //connect to database
 $con = connect_to_database();
@@ -63,7 +64,7 @@ else {
 
 <!--ERROR / CONFIRMATION MESSAGE -->
 <?php
-    $err = $_GET['err'];
+    $err = (isset($_GET['err'])) ? $_GET['err'] : 0;
     if($err == 1)
         echo '<table><td style="height:30px; background:lightgreen; border:1px solid darkgreen; border-spacing: 1px; padding: 3px;"><p>You will receive an activation email</p></td></table>';
     if($err == 2)
@@ -108,9 +109,9 @@ else {
 </div>
 
 
-<div>
-<center>
-<table style="width: 50%">
+<div style="display:inline-block; float:left; width:64%">
+
+<table align="right" style="width:77%">
 <?php
 //display last posts
 $sql = "SELECT * FROM posts ORDER BY ID DESC";
@@ -118,14 +119,14 @@ $res = mysqli_query($con, $sql);
 echo "<tr><td style='text-align:center'><b><p>LAST POSTS</p></b></td></tr>";
 $cont = 0;
 while(($cont < 20) && $row = mysqli_fetch_assoc( $res )) {
-    if($row['board'] != "test") {
+    if($row['board'] != "test" && $row['commento']) {
 
         //stampa link to thread
         if($row['replyTo'])
             $num = $row['replyTo'];
         else
             $num = $row['ID'];
-        $threadlink = "http://4kev.org/threads/" . $num . ".php";
+        $threadlink = "http://4kev.org/thread.php?op=" . $num;
 
         //stampa board
         echo "<tr><td><p><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a>";
@@ -148,10 +149,59 @@ while(($cont < 20) && $row = mysqli_fetch_assoc( $res )) {
 ?>
 </td></table>
 </div>
+
+<div style="display:inline-block; float:right; width:36%">
+    <table align="left" style="width:58%">
+<?php
+//display last images
+$sql = "SELECT * FROM posts ORDER BY ID DESC";
+$res = mysqli_query($con, $sql);
+echo "<tr><td style='text-align:center'><b><p>LAST IMAGES</p></b></td></tr>";
+$cont = 0;
+while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
+    if($row['board'] != "test" && $row['image']) {
+
+        //link to thread
+        if($row['replyTo'])
+            $num = $row['replyTo'];
+        else
+            $num = $row['ID'];
+        $threadlink = "http://4kev.org/thread.php?op=" . $num;
+
+        //board
+        echo "<tr><td><p><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a></p>";
+
+        //picture
+        $pic = $row['image'];
+        echo "<a href='$threadlink'><img class='smallpic' src='uploads/$pic'></a>";
+
+        
+
+        echo "</td></tr>";
+        $cont++;
+    }
+}
+?>
+</td></table>
+</div>
+
+
+
+
+<div style="clear:both" />
 <hr>
 <div style="clear:both">
-<center>
-<p style="clear:both;"><i>kev@4kev.org</i> | <A href="http://4kev.org/rules.php">Rules</A>  | Visits: <?php include "count.php"; ?></p>
+
+<?php
+    $sql = "SELECT * FROM hitCounter";
+    $res = mysqli_query($con, $sql);
+    while($row = mysqli_fetch_assoc($res)) {
+        $count = $row['count'];
+        $a = "UPDATE hitCounter SET count=($count+1) WHERE count=$count";
+        $b = mysqli_query($con, $a);
+    }
+?>
+<p align="center" style="clear:both;"><A href="http://4kev.org/rules.php">Rules</A>  | Visits: <?php echo $count; ?></p>
 </center>
 <br>
 </div>

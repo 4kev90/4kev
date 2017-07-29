@@ -3,6 +3,7 @@
 session_start();
 
 include('functions.php');
+include('connectToDatabase.php');
 
 //connect to database
 $con = connect_to_database();
@@ -27,6 +28,7 @@ if($_GET['board']) {
         $boardName == "random"       ||
         $boardName == "feels"        ||
         $boardName == "meta"         ||
+        $boardName == "development"  ||
         $boardName == "cyberpunk")
         $boardExists = 1;
     if($boardExists != 1)
@@ -36,8 +38,15 @@ else
     header('Location: http://4kev.org');
 
 //check if user is a mod
-if( $_SESSION['ID'] == x || $_SESSION['ID'] == x || $_SESSION['ID'] == x) 
-    $isMod = 1;
+$sessionID = $_SESSION['ID'];
+$sql = "SELECT * FROM users WHERE ID = $sessionID";
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+    if($row['isMod'] == 1)
+        $isMod = 1;
+    else if($row['isMod'] == 2)
+        $isMod = 2;
+}
 
 //prepare variables to insert into table
 //retrieve username
@@ -59,7 +68,7 @@ $date = date('d/m/Y H:i:s', time());
 $image = basename($_FILES["fileToUpload"]["name"]);
 
 //delete post
-if($_POST['delete'] && $isMod == 1) {
+if($_POST['delete'] && $isMod) {
     $postDel = $_POST['delete'];
     $postDel = str_replace("'", "", $postDel);
     $sql = "DELETE FROM posts WHERE ID = $postDel OR replyTo = $postDel";
@@ -167,10 +176,11 @@ if($comm) {
         }
     }
 
-    if(uploadOk == 1) {
-        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn')";
-        mysqli_query($con, $sql);   
-    }
+    if($uploadOk == 1) {
+        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn, isMod) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn', '$isMod')";
+        mysqli_query($con, $sql);  
+    } 
+    
 
 //redirect to same page
 header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
@@ -306,9 +316,9 @@ if($row['loggedIn'] == 1)
     echo nl2br(" <font color='orange'><b style='cursor:pointer;' title='Registered User'>&#9733</b></font> ");
 
 //select name color
-if($row['options'] == 'xxxx')
+if($row['isMod'] == 2)
     echo nl2br("<font color='red'><b> ");
-else if($row['options'] == 'xxxx')
+else if($row['isMod'] == 1)
     echo nl2br("<font color='orange'><b> ");
 else
     echo nl2br("<font color='lawngreen'><b> ");
@@ -322,7 +332,7 @@ $hiddenButton = makeFileName();
 echo nl2br("$rowName</b></font> {$row['dateTime']} No.{$row['ID']} Replies:$q [<A href=thread.php?op=".$id.">Reply</A>] <a class='blue' onclick='showButton($hiddenButton)'>▶</a></p>");
 
 //show delete button if user is a mod, else show report button
-        if($isMod == 1)
+        if($isMod)
             echo "  <form id='$hiddenButton' style='display:none' action='#' method='post'>
                     <button type='submit' name='delete' value='{$row['ID']}'>Delete</button>
                     </form>";

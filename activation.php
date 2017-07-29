@@ -1,6 +1,7 @@
 <?php
 
 include('functions.php');
+include('connectToDatabase.php');
 
 //connect to database
 $con = connect_to_database();
