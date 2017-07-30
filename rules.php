@@ -12,6 +12,11 @@ $con = connect_to_database();
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
+<?php
+	$style = $_COOKIE["style"];
+    if($style != 'cyber')
+        echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>

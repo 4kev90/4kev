@@ -23,7 +23,6 @@ if($_GET['board']) {
         $boardName == "music"        ||
         $boardName == "politics"     ||
         $boardName == "fitness"      ||
-        $boardName == "politics"     ||
         $boardName == "anime"        ||
         $boardName == "random"       ||
         $boardName == "feels"        ||
@@ -191,6 +190,11 @@ header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
 <HTML>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
+<?php
+    $style = $_COOKIE["style"];
+    if($style != 'cyber')
+        echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="myjs.js?v=<?=time();?>" ></script>
@@ -312,16 +316,17 @@ if($row['image'])
 //print subject
 echo nl2br("<td style='vertical-align:top'><p style='display:inline;' class='grey'><b class='yellow'>{$rowSubject}</b>");
 
-if($row['loggedIn'] == 1)
-    echo nl2br(" <font color='orange'><b style='cursor:pointer;' title='Registered User'>&#9733</b></font> ");
+if($row['isMod'] == 1)
+    echo nl2br(" <font color='white'><b style='font-size:130%; cursor:pointer;' title='Admin'>☯</b></font> ");
 
-//select name color
-if($row['isMod'] == 2)
-    echo nl2br("<font color='red'><b> ");
-else if($row['isMod'] == 1)
-    echo nl2br("<font color='orange'><b> ");
-else
-    echo nl2br("<font color='lawngreen'><b> ");
+else if($row['isMod'] == 2)
+    echo nl2br(" <font color='red'><b style='font-size:130%; cursor:pointer;' title='Mod'>☯</b></font> ");
+
+else if($row['loggedIn'] == 1)
+    echo nl2br(" <font color='orange'><b style='font-size:130%; cursor:pointer;' title='Registered User'>&#9733</b></font> ");
+
+
+echo nl2br("<font color='lawngreen'><b> ");
 
 //print anonymous if name is not present
 if(!$row['name'])
@@ -329,7 +334,14 @@ if(!$row['name'])
 
 //print name, date, time, post number, number of replies and link to thread
 $hiddenButton = makeFileName();
-echo nl2br("$rowName</b></font> {$row['dateTime']} No.{$row['ID']} Replies:$q [<A href=thread.php?op=".$id.">Reply</A>] <a class='blue' onclick='showButton($hiddenButton)'>▶</a></p>");
+
+//print link to user profile is name is registered
+if($row['loggedIn'] == 1)
+    echo nl2br("<a href='users.php?user=$rowName'>$rowName</a>");
+else
+    echo nl2br("$rowName");
+
+echo nl2br("</b></font> {$row['dateTime']} No.{$row['ID']} Replies:$q [<A href=threads.php?op=".$id.">Reply</A>] <a class='blue' onclick='showButton($hiddenButton)'>▶</a></p>");
 
 //show delete button if user is a mod, else show report button
         if($isMod)

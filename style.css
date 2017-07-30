@@ -1,16 +1,14 @@
 a {
-    cursor: pointer;
+    cursor:pointer;
     text-decoration: none;
     color: lawngreen;
 }
-
 p {
     margin: 5px;
     font-family: Courier, "Lucida Console", monospace;
     font-size: 10pt;
     color: lightblue;
 }
-
 table {
     background-color:#17202a;
     border: 1px solid #004899;
@@ -19,23 +17,19 @@ table {
     font-size: 10pt;
     border-collapse: separate;
 }
-
 td.pad {
     padding: 0px;
     padding-bottom: 5px;
 }
-
 textarea, input {
    resize: none;
    height: 100%;
 }
-
 html, body {
   margin:0;
   padding:0;
   background-color:black;
 }
-
 button, .input2 {
   border-radius: 7px;
   color: lightblue;
@@ -43,14 +37,12 @@ button, .input2 {
   cursor: pointer;
   border: 1px solid fuchsia;
 }
-
 img {
     border-radius: 7px;
 }
-
 hr {
     border-color: purple;
-}
+    }
 
 .preview {
     z-index: 1;
@@ -59,71 +51,61 @@ hr {
     border: 1px solid #888;
     float: left;
 }
-
 .replyWindow {
     display: none; 
     position: fixed;
     z-index: 1;
+    
+    
     overflow: auto;
-}
 
+}
 .registerWindow {
     display: none; 
     position: fixed;
     z-index: 1;
 }
-
 .hidevideo{
-    display: none;
+    display:none;
 }
-
 .showvideo{
-    display: block;
+    display:block;
 }
-
 .smallpic{
-    max-height: 170px;
-    max-width: 170px;
-    height: auto;
-    width: auto;
+    max-height:170px;
+    max-width:170px;
+    height:auto;
+    width:auto;
 }
-
 .largepic{
-    max-height: 700px;
-    max-width: 700px;
-    height: auto;
-    width: auto;
+    max-height:700px;
+    max-width:700px;
+    height:auto;
+    width:auto;
 }
-
 .close {
     color: #aaaaaa;
     float: right;
     font-weight: bold;
 }
-
 .close:hover, .close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
-
 .bgImage {
     background: url("bg.jpg");
     background-repeat: repeat-x;
-}
-
+    }
 .yellow {
     color: yellow;
 }
-
 .grey {
     color: grey;
 }
-
 .red {
     color: red;
 }
-
 .blue {
     color: #004899;
 }

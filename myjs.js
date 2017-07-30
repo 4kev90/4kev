@@ -1,9 +1,13 @@
-function ytvid(randomID)
+function ytvid(randomID, randomID2)
 {
-    if(document.getElementById(randomID).className == "hidevideo")
+    if(document.getElementById(randomID).className == "hidevideo") {
         document.getElementById(randomID).className = "showvideo";
-    else
+        document.getElementById(randomID).innerHTML = document.getElementById(randomID2).innerHTML;
+    }
+    else {
         document.getElementById(randomID).className = "hidevideo";
+        document.getElementById(randomID).innerHTML = "";
+    }
 }
 
 function showForm() {

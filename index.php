@@ -6,12 +6,27 @@ include('connectToDatabase.php');
 
 //connect to database
 $con = connect_to_database();
+
+
+if($_GET['style']) {
+    $style = $_GET['style'];
+
+    setcookie('style', $style, time()+3600, '/');
+}
+else
+    $style = $_COOKIE["style"];
+
+
 ?>
 
 <HTML>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
+<?php
+if($style != 'cyber')
+    echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>
@@ -126,7 +141,7 @@ while(($cont < 20) && $row = mysqli_fetch_assoc( $res )) {
             $num = $row['replyTo'];
         else
             $num = $row['ID'];
-        $threadlink = "http://4kev.org/thread.php?op=" . $num;
+        $threadlink = "http://4kev.org/threads.php?op=" . $num;
 
         //stampa board
         echo "<tr><td><p><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a>";
@@ -169,11 +184,11 @@ while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
         $threadlink = "http://4kev.org/thread.php?op=" . $num;
 
         //board
-        echo "<tr><td><p><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a></p>";
+        echo "<tr><td><p style='text-align:center'><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a></p>";
 
         //picture
         $pic = $row['image'];
-        echo "<a href='$threadlink'><img class='smallpic' src='uploads/$pic'></a>";
+        echo "<p style='text-align:center'><a href='$threadlink'><img class='smallpic' src='uploads/$pic'></a></p>";
 
         
 
@@ -201,7 +216,19 @@ while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
         $b = mysqli_query($con, $a);
     }
 ?>
-<p align="center" style="clear:both;"><A href="http://4kev.org/rules.php">Rules</A>  | Visits: <?php echo $count; ?></p>
+<p align="center" style="clear:both;">
+    <a href="stats.php">Stats</a> | 
+    <a href="rules.php">Rules</a> | 
+    Visits: <?php echo $count; ?>
+</p>
+<hr>
+<p align="center"> 
+    <a href="index.php?style=cyber">Cyber</a> | 
+    <a href="index.php?style=tomorrow">Tomorrow</a> | 
+    <a href="index.php?style=insomnia">Insomnia</a> | 
+    <a href="index.php?style=yotsuba">Yotsuba</a>
+</p>
+
 </center>
 <br>
 </div>

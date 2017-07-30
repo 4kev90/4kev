@@ -1,6 +1,6 @@
 <?php
 
-$top_message ="<p></p>";
+$top_message ="<p>Stats page: <a href='https://www.4kev.org/stats.php'>https://www.4kev.org/stats.php</a></p>";
 
 
 
