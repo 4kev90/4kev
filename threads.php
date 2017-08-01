@@ -343,7 +343,7 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
 
         //show picture if present
         if($row['image'])
-        echo nl2br("<td style='vertical-align:top'><img class='smallpic' id=$imageID src='$rowImage' onclick='resizepic(this.id)'></td>");
+        echo nl2br("<td style='vertical-align:top'><img class='pic' id=$imageID src='$rowImage' onclick='resizepic(this.id)'></td>");
     
         //print subject
         echo "<td class='pad' style='vertical-align:top'><p style='display:inline;' class='grey'><b class='yellow'>$rowSubject</b>";

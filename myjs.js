@@ -28,12 +28,6 @@ function showButton(x) {
 
 $(document).ready(function(){
 
-    $(".smallpic").hover(function(event){
-        var idx = "#" + this.id;
-        $(idx).toggleClass("smallpic largepic");
-    });
-        
-
     $(".postlink").hover(function(event){
         var x = event.clientX + 10;
         var y = event.clientY;
