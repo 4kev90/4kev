@@ -17,9 +17,11 @@ if($_GET['user'])
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
 <?php
-	$style = $_COOKIE["style"];
-    if($style != 'cyber')
-        echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+	if($_COOKIE["style"]) {
+        $style = $_COOKIE["style"];
+        if($style != 'cyber')
+            echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+    }
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -36,7 +38,7 @@ if($_GET['user'])
 
 <!--BANNER-->
 <center>
-    <?php include "banner.php"; ?>
+<?php banner(); ?>
 
 <br><br>
 <table><td><center>
@@ -74,7 +76,7 @@ while(($row = mysqli_fetch_assoc( $selectRes ))) {
 
 					//show picture if present
 					if($row['image'])
-					    echo nl2br("<td style='vertical-align:top'><img class='smallpic' id=$imageID src=$rowImage onclick='resizepic(this.id)'></td>");
+					    echo nl2br("<td style='vertical-align:top'><img class='pic' id=$imageID src=$rowImage onclick='resizepic(this.id)'></td>");
 
 					//print subject
 					echo nl2br("<td style='vertical-align:top'><p style='display:inline;' class='grey'><b class='yellow'>{$rowSubject}</b>");

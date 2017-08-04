@@ -36,8 +36,9 @@ if($style != 'cyber')
 
 <?php boardList(); ?>
 
+<!--BANNER-->
 <center>
-<?php include "banner.php" ?>
+<?php banner(); ?>
 
 <br><br>
 <table><td><center>
@@ -129,7 +130,7 @@ $sql = "SELECT * FROM posts ORDER BY ID DESC";
 $res = mysqli_query($con, $sql);
 echo "<tr><td style='text-align:center'><b><p>LAST POSTS</p></b></td></tr>";
 $cont = 0;
-while(($cont < 20) && $row = mysqli_fetch_assoc( $res )) {
+while(($cont < 80) && $row = mysqli_fetch_assoc( $res )) {
     if($row['board'] != "test" && $row['commento']) {
 
         //stampa link to thread
@@ -177,7 +178,7 @@ while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
             $num = $row['replyTo'];
         else
             $num = $row['ID'];
-        $threadlink = "http://4kev.org/thread.php?op=" . $num;
+        $threadlink = "http://4kev.org/threads.php?op=" . $num;
 
         //board
         echo "<tr><td><p style='text-align:center'><a href='$threadlink'><b>No.{$row['ID']} {$row['board']}<br></b></a></p>";
@@ -222,7 +223,8 @@ while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
     <a href="index.php?style=cyber">Cyber</a> | 
     <a href="index.php?style=tomorrow">Tomorrow</a> | 
     <a href="index.php?style=insomnia">Insomnia</a> | 
-    <a href="index.php?style=yotsuba">Yotsuba</a>
+    <a href="index.php?style=yotsuba">Yotsuba</a> | 
+    <a href="index.php?style=yotsuba-b">Yotsuba-B</a>
 </p>
 
 </center>

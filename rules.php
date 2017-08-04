@@ -26,8 +26,12 @@ $con = connect_to_database();
 
 <?php boardList(); ?>
 
+<!--BANNER-->
 <center>
-<?php include "banner.php"; ?>
+<?php
+$banner = "<A href = 'http://4kev.org/'><img src = '/banners/" . rand(0, 38) . ".gif' /></A>";
+echo $banner;
+?>
 
 <br><br>
 <table><td><center>

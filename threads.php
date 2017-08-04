@@ -204,9 +204,11 @@ die;
 </head>
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
 <?php
-$style = $_COOKIE["style"];
-    if($style != 'cyber')
-        echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+    if($_COOKIE["style"]) {
+            $style = $_COOKIE["style"];
+            if($style != 'cyber')
+                echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+        }
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -222,7 +224,8 @@ $style = $_COOKIE["style"];
 
     <?php boardList(); ?>
 
-    <?php include "banner.php"; ?>
+    <!--BANNER-->
+    <?php banner(); ?>
 
     <br><br>
     <table><td><center>

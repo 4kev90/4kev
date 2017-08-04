@@ -71,6 +71,12 @@ hr {
 .showvideo{
     display:block;
 }
+.smallpic{
+    max-height:170px;
+    max-width:170px;
+    height:auto;
+    width:auto;
+}
 .pic {
     max-height:170px;
     max-width:170px;
@@ -83,15 +89,21 @@ hr {
     -ms-transition: 0.3s;
 }
 .pic:hover {
-    max-height:700px;
-    max-width:700px;
-    height:auto;
-    width:auto;
-    transition: 0.3s;
+      max-height:700px;
+      max-width:700px;
+      height:auto;
+     width:auto;
+     transition: 0.3s;
     -moz-transition: 0.3s;
     -webkit-transition: 0.3s;
     -o-transition: 0.3s;
     -ms-transition: 0.3s;
+}
+.largepic{
+    max-height:700px;
+    max-width:700px;
+    height:auto;
+    width:auto;
 }
 .close {
     color: #aaaaaa;

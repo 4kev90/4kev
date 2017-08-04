@@ -191,9 +191,11 @@ header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
 <?php
-    $style = $_COOKIE["style"];
-    if($style != 'cyber')
-        echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+    if($_COOKIE["style"]) {
+        $style = $_COOKIE["style"];
+        if($style != 'cyber')
+            echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
+    }
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -208,8 +210,9 @@ header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
 
 <?php boardList(); ?>
 
+<!--BANNER-->
 <center>
-<?php include "banner.php" ?>
+<?php banner(); ?>
 
 <br><br>
 <table><td><center>
@@ -307,7 +310,7 @@ echo nl2br("<table style='margin-bottom:5px; display:inline-table;'><tr>");
 
 //show picture if present
 if($row['image'])
-    echo nl2br("<td style='vertical-align:top'><img class='smallpic' id=$imageID src=$rowImage onclick='resizepic(this.id)'></td>");
+    echo nl2br("<td style='vertical-align:top'><img class='pic' id=$imageID src=$rowImage onclick='resizepic(this.id)'></td>");
 
 //print subject
 echo nl2br("<td style='vertical-align:top'><p style='display:inline;' class='grey'><b class='yellow'>{$rowSubject}</b>");

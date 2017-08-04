@@ -2,7 +2,10 @@
 
 $top_message ="<p>Stats page: <a href='https://www.4kev.org/stats.php'>https://www.4kev.org/stats.php</a></p>";
 
-
+function banner() {
+    $banner = "<A href = 'http://4kev.org/'><img src = '/banners/" . rand(0, 39) . ".gif' /></A>";
+    echo $banner;
+}
 
 function makePwd($length = 8) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
