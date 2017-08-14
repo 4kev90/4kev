@@ -9,6 +9,8 @@ $con = connect_to_database();
 ?>
 
 <HTML>
+<head>
+<title>Rules</title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
@@ -21,10 +23,12 @@ $con = connect_to_database();
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>
 <script src="jquery-3.2.0.min.js"></script>
+</head>
 
+<body>
 <div class="bgImage">
 
-<?php boardList(); ?>
+<?php boardList($con); ?>
 
 <!--BANNER-->
 <center>
@@ -35,11 +39,17 @@ echo $banner;
 
 <br><br>
 <table><td><center>
-<p style="font-size:30px;"><b>There are no rules</b></p>
-<?php echo "<p>If we don't like what you post, you get banned</p>"; ?>
+<p style="font-size:30px;"><b>GLOBAL RULES</b></p>
+<?php echo "<p align='left'>
+	1) be polite to other users<br>
+	2) do not spam or flood the website<br>
+	3) do not post pornography or disturbing content<br>
+	4) critics must be constructive<br>
+	5) just to make it clear, this is an anime website
+	</p>"; ?>
 </center><td></table>
 <br>
 <hr>
 </div>
-
+</body>
 </HTML>

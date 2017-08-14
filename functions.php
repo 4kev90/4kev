@@ -1,9 +1,32 @@
 <?php
 
-$top_message ="<p>Stats page: <a href='https://www.4kev.org/stats.php'>https://www.4kev.org/stats.php</a></p>";
+$top_message ="<p>Work in progress</p>";
+
+function loginBar($con, $query) {
+    if(!isset($_SESSION['ID']))
+        echo '
+        <button id="showLogin" style="width:100px; text-align:center; height:30px;" onclick="showLogin()">Login</button>
+        <div id="login" style="display:none; width:200px; margin: 0 auto;">
+        <form action= "../login.php?op=' . $query . '&board=' . $query . '&x=' . $_SERVER['PHP_SELF'] . '" method="post" onsubmit="myButton.disabled = true; return true;">
+        <input type="text" name="email" placeholder="Email" /><br>
+        <input type="password" name="pwd" placeholder="Password" /><br>
+        <button type="submit" name="myButton" style="text-align:center; height:30px; width:100%">Log In</button>
+        </form><br></div>';
+    else {
+        $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
+            $res = mysqli_query($con, $sql);
+            while($row = mysqli_fetch_assoc( $res ))
+                 echo '
+                    <div class="form">
+                    <p style="display:inline">Logged in as <strong>' . $row["name"] . '</strong></p>
+                    <form action= "../logout.php?op=' . $query . '&board=' . $query . '&x=' . $_SERVER['PHP_SELF'] . '" method="post" style="display:inline;">
+                    <button>Log Out</button>
+                    </form></div><br><br>';
+    }
+}
 
 function banner() {
-    $banner = "<A href = 'http://4kev.org/'><img src = '/banners/" . rand(0, 39) . ".gif' /></A>";
+    $banner = "<a href = 'http://4kev.org/'><img class='banner' src = '/banners/" . rand(0, 46) . ".gif' /></a>";
     echo $banner;
 }
 
@@ -63,23 +86,28 @@ function wordFilter($word) {
 }
 
 
-function boardList() {
-echo '<div style="clear:both; background-color:#17202a" id="boardlist">
-<hr>
-<p style="text-align:center;">
+function boardList($con) {
+echo '<div class="boardlist">
+<p style="text-align:center;" class="boards">| ';
 
-    <a href="boards.php?board=random">random</a> |
-    <a href="boards.php?board=technology">technology</a> |
-    <a href="boards.php?board=development">development</a> | 
-    <a href="boards.php?board=music">music</a> | 
-    <a href="boards.php?board=anime">anime</a> |
-    <a href="boards.php?board=feels">feels</a> |
-    <a href="boards.php?board=cyberpunk">cyberpunk</a> |
-    <a href="boards.php?board=meta">meta</a> 
+$boardList = array('random', 'anime', 'cyberpunk', 'development', 'feels', 'music', 'politics', 'technology', 'videogames', 'meta');
 
+foreach($boardList as $boardName)
+    echo '<a class="boards" href="boards.php?board=' . $boardName . '">' . $boardName . '</a> | ';
+
+/*
+$sql = 'SELECT boardName FROM boards ORDER BY boardName ASC';
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+    $boardName = $row['boardName'];
+    if($boardName != 'test')
+        echo '<a href="boards.php?board=' . $boardName . '">' . $boardName . '</a> | ';
+}*/
+
+echo '
 </p>
-<hr>
 </div>
+<div class="topSpacing"></div>
 ';
 }
 

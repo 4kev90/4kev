@@ -1,0 +1,169 @@
+
+/*
+font[color="lawngreen"]
+{
+    color: #117743;
+}                                          
+p[style="font-size:30px"]
+{
+    text-shadow: 1px 1px 1px rgba(100,0,0,0.6);
+    font-size:28px;
+    font-weight:400     
+}
+
+body > div.bgImage > center > table
+{
+    border:0px;
+    background:inherit;
+}
+*/
+
+
+
+
+
+
+
+
+a {
+    cursor:pointer;
+    text-decoration: none;
+    color:#00e;
+}
+a:hover
+{
+    color: #cc1105;
+}
+p {
+    margin: 5px;
+    font-family: arial,helvetica,sans-serif;
+    font-size: 10pt;
+    color: maroon;
+}
+textarea, input {
+    resize: none;
+    width: 100%;
+}
+html, body {
+    margin:0;
+    padding:0;
+    background: #ffe url(http://s.4cdn.org/image/fade.png) top center repeat-x;
+    color:maroon;
+}
+button, .input2 {
+    cursor: pointer;
+    background: linear-gradient(to bottom, #F8F8F8, #DCDCDC) no-repeat;
+    border: 1px solid #BBB;
+    color:black;
+}
+hr {
+    border:0;
+    border-top:#282a2e;
+    height:0;
+    display:block;
+    border-width: 1px;
+}
+.preview {
+    z-index: 1;
+    position: fixed;
+    display: inline-table;
+    border: 1px solid #888;
+    float: left;
+}
+.replyWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    overflow: auto;
+    background-color:#f0e0d6;
+    border: 1px solid #d9bfb7;
+}
+.registerWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+}
+.pic {
+    max-height:170px;
+    max-width:170px;
+    height:auto;
+    width:auto;
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
+}
+.pic:hover {
+      max-height:700px;
+      max-width:700px;
+      height:auto;
+     width:auto;
+     transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
+}
+.largepic{
+    max-height:700px;
+    max-width:700px;
+    height:auto;
+    width:auto;
+}
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-weight: bold;
+}
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.bgImage {
+    background: #ffe url(http://s.4cdn.org/image/fade.png) top center repeat-x;
+    text-align: center;
+}
+.subject    { color: #cc1105; }
+.info       { color: grey; }
+.redtext    { color: #b5bd68; }
+.adminLogo  { color: purple; }
+.modLogo    { color: #b5bd68; }
+.userLogo   { color: orange; }
+.userName   { color: darkblue; }
+.topSpacing { height: 40px; }
+.hidevideo  { display:none; }
+.showvideo  { display:block; }
+.boards     { color: maroon; }
+.boardName, .form {
+    background-color:#f0e0d6;
+    font-size: 10pt;
+    display:inline-block;
+    overflow: hidden;
+    border: 1px solid #d9bfb7;
+}
+.boardlist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    background-color: rgba(240,224,214,0.98);
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, .15);
+    border-top-width: 1px;
+    padding: 1px 2px 2px;
+    font-size:12px;
+    color:#b86;
+}
+.post {
+    background-color:#f0e0d6;
+    font-size: 10pt;
+    border-collapse: separate;
+    display: inline-block;
+    margin: 5px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    max-width: 99%;
+    border: 1px solid #d9bfb7;
+}

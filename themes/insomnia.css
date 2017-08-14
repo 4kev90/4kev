@@ -1,0 +1,104 @@
+/*Custom stuff edit these to change everything*/
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+/*Made by Omega*/
+:root {
+    --mcolor: #202020 !important;
+ /*Main Color*/
+    --scolor: #5a5a5a !important;
+ /*Secondary*/
+    --acolor: #5ab9b9 !important;
+ /*Link colors*/
+ 
+    --tcolor: #9e9e9e !important;
+ /*Text colors*/
+ 
+    --pbgcolor: #303030 !important;
+ /*Post background color*/
+ 
+    --rtcolor: #117f2e !important;
+ /*"Red" Text color*/
+ 
+    --sucolor: #6bcaca !important;
+ /*Subject colors*/
+ 
+    --ncolor: yellow !important;
+ /*Name colors*/
+ 
+    --bgcolor: #252525 !important;
+ /*Background Color*/
+    --shcolor: #191919 !important;
+ /*Shadow Color*/
+}
+ /*Border Radius(Set this to 0px for squares)*/ 
+* {
+    border-radius:0px !important;
+    font-family:"Ubuntu" !important;
+    /*font-size:15px !important;*/
+}
+table {
+    border:hidden !important;
+    /*border-radius: var(--bradius);*/
+    background-color: var(--pbgcolor);
+    font-size: 10px !important;
+
+}
+/*Shadows make everything look good*/
+#draggable, table, #boardlist, button {
+    -moz-box-shadow:    1px 2px 2px 1px var(--shcolor) !important;
+    -webkit-box-shadow: 1px 2px 2px 1px var(--shcolor) !important;
+    box-shadow:         1px 2px 2px 1px var(--shcolor) !important;
+}
+/* Giving elements colo(u)r*/
+a {
+    color: var(--acolor) !important;
+}
+
+button, .input2 {
+    color: var(--tcolor) !important;
+    background-color: var(--pbgcolor) !important;
+}
+hr {
+    visibility:hidden;
+}
+p {
+    color: var(--tcolor) !important;
+}
+input {
+    border: 1px solid var(--mcolor) !important;
+}
+html, body, input, textarea, #fileToUpload {
+    background-color: var(--bgcolor) !important;
+    color: var(--tcolor) !important;
+}
+textarea, button, input[type="file"] {
+    border: 0px !important;
+}
+
+/*Fuck you kev*/
+font[color="red"] {
+    color:var(--rtcolor);
+}
+b {
+    color: #cfcfcf !important;
+}
+.yellow {
+    color: var(--sucolor) !important;
+}
+div#boardlist {
+    background-color: var(--mcolor) !Important;
+    color:var(--acolor);
+}
+.bgImage {
+    background:none;
+    background-color:var(--bgcolor);
+/*Making the 4kev look good*/
+}
+
+body > div.bgImage > center > table > tbody > tr > td > center > p:nth-child(1) > b {
+    font-size:40px !important;
+    content:"4Kev" !important;
+}
+/*Fixing kev's insistance to fuck everything up*/
+textarea {
+    box-sizing:inherit !important;
+}

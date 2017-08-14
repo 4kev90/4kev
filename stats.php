@@ -9,6 +9,8 @@ $con = connect_to_database();
 ?>
 
 <HTML>
+<head>
+<title>Stats</title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
@@ -21,10 +23,12 @@ $con = connect_to_database();
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>
 <script src="jquery-3.2.0.min.js"></script>
+</head>
+<body>
 
 <div class="bgImage">
 
-<?php boardList(); ?>
+<?php boardList($con); ?>
 
 <!--BANNER-->
 <center>
@@ -35,7 +39,7 @@ echo $banner;
 
 <br><br>
 <table><td><center>
-<p style="font-size:30px;"><b>Statistics</b></p>
+<p style="font-size:30px;"><b>Stats</b></p>
 <?php echo $top_message; ?>
 </center><td></table>
 <br>

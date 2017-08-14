@@ -14,6 +14,8 @@ if($_GET['user'])
 ?>
 
 <HTML>
+<head>
+<title><?php echo $userName; ?></title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
 <?php
@@ -26,6 +28,7 @@ if($_GET['user'])
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="myjs.js?v=<?=time();?>" ></script>
+</head>
 
 <div class="bgImage">
 
@@ -34,7 +37,7 @@ if($_GET['user'])
         echo "<script> alert('Reported'); </script>";
 ?>
 
-<?php boardList(); ?>
+<?php boardList($con); ?>
 
 <!--BANNER-->
 <center>
@@ -172,7 +175,7 @@ while(($row = mysqli_fetch_assoc( $selectRes ))) {
 
 ?>
 
-<?php boardList(); ?>
-
+<?php boardList($con); ?>
+</body>
 </html>
 

@@ -192,7 +192,7 @@ if(($comm || $image) && ($q < $bumpLimit)) {
     }
 
 //redirect to same page
-header('Location: ' . $_SERVER['PHP_SELF'] . '?op=' . $op);
+header('Location: ' . $_SERVER['PHP_SELF'] . '?op=' . $op . '#' . $newBump);
 die;
 }
 
@@ -200,122 +200,89 @@ die;
 
 <HTML>
 <head>
- <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-</head>
-<link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
-<?php
-    if($_COOKIE["style"]) {
-            $style = $_COOKIE["style"];
-            if($style != 'cyber')
-                echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
-        }
+<title><?php echo 'Thread ' . $op; ?></title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<?php 
+    if($_COOKIE["style"]) 
+        $style = $_COOKIE["style"];
+    else
+        $style = 'cyber';
+    echo '<link rel="stylesheet" type="text/css" href="themes/' . $style . '.css?v=' . time() . '">'; 
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="myjs.js?v=<?=time();?>"></script>
+</head>
 
 <div class="bgImage">
-    <center>
 
     <?php //print a message if a post has been reported
         if($_POST['report'])
             echo "<script> alert('Reported'); </script>";
     ?>
 
-    <?php boardList(); ?>
+    <?php boardList($con); ?>
 
     <!--BANNER-->
     <?php banner(); ?>
 
     <br><br>
-    <table><td><center>
+    <div class="boardName">
     <p style="font-size:30px"><b><? echo $boardName; ?></b></p>
     <?php echo $top_message; ?>
-    </center></td></table>
-    <br>
+    </div>
+    <br><br>
 
     <!--LOGIN BAR-->
-    <?php 
-    if(!isset($_SESSION['ID']))
-        echo '
-        <button id="showLogin" style="width:100px; text-align:center; height:30px;" onclick="showLogin()">Login</button>
-        <div id="login" style="display:none">
-            <table>
-            <form action= "../login.php?op=' . $op . '&x=' . $_SERVER['PHP_SELF'] . '" method="post" onsubmit="myButton.disabled = true; return true;">
-                <td><p>Email</p></td><td><input type="text" name="email" /></td>
-                <td><p>Password</p></td><td><input type="password" name="pwd" /></td>
-                <td><button type="submit" name="myButton">Log In</button></td>
-            </form>
-            </table>
-            <br>
-        </div>';
-    else {
-        $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
-        $res = mysqli_query($con, $sql);
-        while($row = mysqli_fetch_assoc( $res ))
-            echo '
-                <table>
-                <td><p style="display:inline">Logged in as <b>' . $row['name'] . '</b></p></td>
-                <form action= "../logout.php?op=' . $op . '&x=' . $_SERVER['PHP_SELF'] . '" method="post">
-                <td><button>Log Out</button></td>
-                </form>
-                </table>
-                <br>';
-    }
-    ?>
+    <?php loginBar($con, $op); ?>
 
     <!--POST REPLY BUTTON-->
     <button id="showForm" style="text-align:center; height:30px;" onclick="showForm()">Post a Reply</button>
 
     <!--submission form-->
-    <div id="form" style="display:none">
-        <form action="#" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">   
-        <table>
-            <tr><td><p>Name</p></td><td>
+    <div class="form" id="form" style="display:none">
+        <form style='display:inline;' action="#" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">   
             <?php
                 if(isset($_SESSION['ID'])) {
                     $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
                     $res = mysqli_query($con, $sql);
                         while($row = mysqli_fetch_assoc( $res ))
-                            echo '<b><p style="color:lawngreen">' . $row['name'] . "</p></b></td></tr>";
+                            echo '<strong><p class="userName">' . $row['name'] . "</p></strong>";
                 }
                 else
-                    echo '<textarea rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea></td></tr>';
+                    echo '<textarea rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
             ?>
-            <tr><td><p>Options</p></td><td><textarea style="vertical-align:middle" rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><input type="submit" value="Post" name="myButton" /></td></tr>
-            <tr><td><p>Comment</p></td><td><textarea style="resize:both;" rows="4" cols="40" input type="text" name="comment" /></textarea></td></tr>
-            <tr><td><p>File</p></td><td><input type="file" name="fileToUpload" id="fileToUpload"></td></tr>
-        </table>
+            <textarea style="width:300px;" rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+            <input style="width:300px;" type="file" name="fileToUpload" id="fileToUpload"><br>
+            <textarea style="width:300px; resize:both;" rows="4" cols="40" input type="text" name="comment" /></textarea><br>
+            <button style="text-align:center; height:30px; width:300px" type="submit" value="Post" name="myButton">Post</button>
         </form>
     </div>
-    <hr>
-    </center>
+    <br><hr>
 </div>
 
 <!--reply window-->
 <div id="draggable" class='replyWindow'>
-<table align='center' style="border-collapse:collapse; border: 1px solid fuchsia;">
-<th style="cursor:move;"><p>Post a reply<span class='close'>&times;</span></p></th>
-<form action='#' method='post' enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">
-<tr><td>
+<p style="cursor:move; text-align:center;"><strong>Post a reply</strong><span class='close'>&times;</span></p>
+<form style='display:inline;' action='#' method='post' enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">
 <?php
     if(isset($_SESSION['ID'])) {
         $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
         $res = mysqli_query($con, $sql);
             while($row = mysqli_fetch_assoc( $res ))
-                echo "<b><p style='color:lawngreen'>" . $row['name'] . "</p></b></td></tr>";
+                echo "<strong><p style='text-align:center;' class='userName'>" . $row['name'] . "</p></strong>";
     }
     else
-        echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea></td></tr>';
+        echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
 ?>
-<tr><td><textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea></td></tr>
-<tr><td><textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea></td></tr>
-<!--<tr><td><textarea placeholder="ImageUrl" rows="1" style="width: 300px" input type="text" name="url" /></textarea></td></tr>-->
-<tr><td><input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><input type='submit' align="right" name="myButton" /></td></tr>
-</form></table></div>
+<textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+<input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><br>
+<textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea><br>
+<button style="text-align:center; height:30px; width:300px" type="submit" name="myButton">Post</button>
+</form></div>
 
 <!--post preview-->
-<div class="preview">
+<div class="preview post">
 </div>
 
 <?php
@@ -338,63 +305,69 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
      
     if($row['ID'] == $op || $row['replyTo'] == $op) {
 
-        echo nl2br("<div id='{$rowID}'  style='margin-bottom:5px;'><table style='display:inline-table;'><tr>");
+        echo "<div class='post' id='{$rowID}'>";
 
         //show picture if present
         if($row['image'])
-        echo nl2br("<td style='vertical-align:top'><img class='pic' id=$imageID src='$rowImage' onclick='resizepic(this.id)'></td>");
-    
-        //print subject
-        echo "<td class='pad' style='vertical-align:top'><p style='display:inline;' class='grey'><b class='yellow'>$rowSubject</b>";
-    
-        if($row['isMod'] == 1)
-            echo nl2br(" <font color='white'><b style='font-size:130%; cursor:pointer;' title='Admin'>☯</b></font> ");
+            echo "<img style='float:left;' class='pic' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
 
-        else if($row['isMod'] == 2)
-            echo nl2br(" <font color='red'><b style='font-size:130%; cursor:pointer;' title='Mod'>☯</b></font> ");
+            //PRINT POST INFO
+            echo "<form action='#' method='post' style='vertical-align:top; display: inline-block';>";
+            echo "<p style='padding-left:10px;'>";
 
-        else if($row['loggedIn'] == 1)
-            echo nl2br(" <font color='orange'><b style='font-size:130%; cursor:pointer;' title='Registered User'>&#9733</b></font> ");
+            //print subject
+            echo "<strong><span class='subject'>{$rowSubject}</span></strong>";
 
-    
-        echo nl2br("<font color='lawngreen'><b> ");
-     
-        //print anonymous if name is not present
-        if(!$row['name']) 
-            echo "Anonymous";
-    
-        //print name, date, time and post number
-        $hiddenButton = makeFileName();
+            //print user logo
+            if($row['isMod'] == 1)
+                echo " <span style='cursor:pointer;' title='Admin' class='adminLogo'>☯</span> ";
+            else if($row['isMod'] == 2)
+                echo " <span style='cursor:pointer;' title='Mod' class='modLogo'>☯</span> ";
+            else if($row['loggedIn'] == 1)
+                echo " <span style='cursor:pointer;' title='Registered User' class='userLogo'>&#9733</span> ";
 
-        //print link to user profile is name is registered
-        if($row['loggedIn'] == 1)
-            echo nl2br("<a href='users.php?user=$rowName'>$rowName</a>");
-        else
-            echo nl2br("$rowName");
-        echo "</b></font> {$row['dateTime']} No.<A class='quickReply'>{$row['ID']}</A> <a class='blue' onclick='showButton($hiddenButton)'>▶</a></p>";
+            //print name
+            echo "<span class='userName'><strong> ";
 
-        //show delete button if user is a mod, else show report button
-        if($isMod)
-            echo "  <form id='$hiddenButton' style='display:none' action='#' method='post'>
-                    <button type='submit' name='delete' value='{$row['ID']}'>Delete</button>
-                    </form>";
-        else
-            echo "  <form id='$hiddenButton' style='display:none' action='#' method='post'>
-                    <button type='submit' name='report' value='{$row['ID']}'>Report</button>
-                    </form>";
+            if(!$row['name'])
+                echo("Anonymous");
 
-//check if post is banned and echo message
-$sql2 = "SELECT * FROM bannedPosts";
-$res2 = mysqli_query($con, $sql2);
-while($row2 = mysqli_fetch_assoc($res2))
-    if($row['ID'] == $row2['post']) {
-        echo "<p style='color:red'><b>(User was banned for this post)</b></p>";
-        break;
-}
+            //print link to user profile is name is registered
+            if($row['loggedIn'] == 1)
+                echo nl2br("<a href='users.php?user=$rowName'>$rowName</a>");
+            else
+                echo nl2br("$rowName");
 
-        echo "<br><br>";
+            echo "</strong></span>";
 
-        //PRINT COMMENT
+            //print date and time
+            echo "<span class='info'> {$row['dateTime']}</span>";
+
+            //print post number
+            echo " <a class='quickReply'>{$row['ID']}</a>";
+
+            //print blue arrow
+            $hiddenButton = (string)$row['ID'] . 'btn';
+            echo " <a class='blue' onclick='showButton(\"$hiddenButton\")'>▶</a>";
+
+            //show delete button if user is a mod, else show report button
+            if($isMod)
+                echo " <button id='$hiddenButton' style='display:none;' type='submit' name='delete' value='{$row['ID']}'>Delete</button>";
+            else
+                echo " <button id='$hiddenButton' style='display:none;' type='submit' name='report' value='{$row['ID']}'>Report</button>";
+
+            //check if post is banned and echo message
+            $sql2 = "SELECT * FROM bannedPosts";
+            $res2 = mysqli_query($con, $sql2);
+            while($row2 = mysqli_fetch_assoc($res2))
+                if($row['ID'] == $row2['post']) {
+                    echo "<span style='color:red'><strong>(User was banned for this post)</strong></span>";
+                    break;
+                } 
+
+            echo "<br><br>";
+
+            //PRINT COMMENT
         //divide comment into lines
         $lines = explode("\n", $rowComment);
 
@@ -403,11 +376,9 @@ while($row2 = mysqli_fetch_assoc($res2))
             //check for redtext
             $checkRed = htmlspecialchars_decode($line);
             if($checkRed[0] == '>')
-                echo nl2br("<p><font color='red'>");
+                echo nl2br("<span class='redtext'>");
             else 
-                echo nl2br("<p><font>");
-
-        echo $space;
+                echo nl2br("<span>");
     
             //divide line into words
             $words = explode(" ", $line);
@@ -432,16 +403,15 @@ while($row2 = mysqli_fetch_assoc($res2))
                 else
                     echo "$word ";
             }
-        echo nl2br("</font></p>");
+        echo nl2br("</span>");
         }
-    echo '</td></tr></table></div>';
+    echo "</p></form></div><br>";
     }
 }
 
 ?>
-   
-<?php boardList(); ?>
-
+<br>
+</body>
 </html>
 
 

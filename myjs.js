@@ -11,7 +11,7 @@ function ytvid(randomID, randomID2)
 }
 
 function showForm() {
-    document.getElementById("form").style.display = "block";
+    document.getElementById("form").style.display = "inline-block";
     document.getElementById("showForm").style.display = "none";
 }
 
@@ -68,7 +68,7 @@ $(document).ready(function(){
         $(".replyWindow").css("top", y);
         var str1 = $("#linky").val() + ">>" + $(this).html() + "\n";
         $("#linky").val(str1);
-        $(".replyWindow").css("display", "block");
+        $(".replyWindow").css("display", "inline-block");
     });
         $(".close").click(function(event){
             $(".replyWindow").css("display", "none");
