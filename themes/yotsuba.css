@@ -50,7 +50,7 @@ html, body {
     background: #ffe url(http://s.4cdn.org/image/fade.png) top center repeat-x;
     color:maroon;
 }
-button, .input2 {
+button {
     cursor: pointer;
     background: linear-gradient(to bottom, #F8F8F8, #DCDCDC) no-repeat;
     border: 1px solid #BBB;

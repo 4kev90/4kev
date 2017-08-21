@@ -1,76 +1,145 @@
-* {
-    border-radius: 0px !important;
-}
-
-/* Containers */
 html {
-    background-color: #ddd !important;
+    background-color: #ddd;
 }
 
 body {
-    background-color: #eee !important;
-    color: #333 !important;
+    background-color: #eee;
+    color: #333;
 }
-
-table {
-    background-color: #ddd !important;
-    border: 1px solid #ccc !important;
-}
-
-#boardlist {
-    background-color: rgba(221,221,221,0.98) !important;
-}
-
-.bgImage {
-    background: none !important;
-}
-
-/* Text, Links, Clickables etc */
-
-p {
-    color: #333 !important;
-}
-
 a {
-    color: #f60 !important;
-    text-decoration: none !important;
+    cursor:pointer;
+    text-decoration: none;
+    color: #f60;
 }
-
 a:hover {
     color: #f30 !important;
     text-decoration: underline !important;
 }
 
-font[color="red"] {
-    color: #789922 !important;
+p {
+    margin: 5px;
+    font-family: Courier, "Lucida Console", monospace;
+    font-size: 10pt;
+    color: 333;
 }
-
-font[color="lawngreen"] {
-    color: #004A99 !important;
+textarea, input {
+    resize: none;
+    width: 100%;
 }
-
-.yellow {
-    color: #111 !important;
+html, body {
+  margin:0;
+  padding:0;
 }
-
 button {
-   border-color: rgb(206, 206, 206) rgb(206, 206, 206) rgb(191, 191, 191) !important;
-   background: linear-gradient(#ECECEC, #DDD) repeat scroll 0% 0% transparent !important;
-   color: #f60 !important;
+    color: #f60;
+    background: linear-gradient(#ECECEC, #DDD) repeat scroll 0% 0% transparent;
+    cursor: pointer;
+    border-color: rgb(206, 206, 206) rgb(206, 206, 206) rgb(191, 191, 191);
 }
-
 button:hover {
     color: #f30 !important;
 }
-font[color="white"] {
-    color: #f60 !important;
-}
-/* Other */
-
 hr {
-    visibility: hidden !important;
+    visibility: hidden;
+}
+.preview {
+    z-index: 1;
+    position: fixed;
+    display: inline-table;
+    border: 1px solid #888;
+    float: left;
+}
+.replyWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    overflow: auto;
+    background-color:#ddd;
+    border: 1px solid #ccc;
+}
+.registerWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
 }
 
-textarea, input {
-    box-sizing: inherit !important;
+.pic {
+    max-height:170px;
+    max-width:170px;
+    height:auto;
+    width:auto;
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
 }
+.pic:hover {
+      max-height:700px;
+      max-width:700px;
+      height:auto;
+     width:auto;
+     transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
+}
+.largepic{
+    max-height:700px;
+    max-width:700px;
+    height:auto;
+    width:auto;
+}
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-weight: bold;
+}
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.bgImage {
+    text-align: center;
+}
+.subject    { color: #111; }
+.info       { color: grey; }
+.redtext    { color: #789922; }
+.adminLogo  { color: purple; }
+.modLogo    { color: red; }
+.userLogo   { color: orange; }
+.userName   { color: #004A99; }
+.topSpacing { height: 40px; }
+.hidevideo  { display:none; }
+.showvideo  { display:block; }
+.boards     { color: #004A99; }
+.boardName, .form {
+    background-color:#ddd;
+    font-size: 10pt;
+    display:inline-block;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+.boardlist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    background-color: rgba(221,221,221,0.98); 
+}
+.post {
+    background-color:#ddd;
+    font-size: 10pt;
+    border-collapse: separate;
+    display: inline-block;
+    margin: 5px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    max-width: 99%;
+    border: 1px solid #ccc;
+}
+
+

@@ -30,75 +30,151 @@
  /*Shadow Color*/
 }
  /*Border Radius(Set this to 0px for squares)*/ 
-* {
-    border-radius:0px !important;
-    font-family:"Ubuntu" !important;
-    /*font-size:15px !important;*/
-}
-table {
-    border:hidden !important;
-    /*border-radius: var(--bradius);*/
-    background-color: var(--pbgcolor);
-    font-size: 10px !important;
 
-}
 /*Shadows make everything look good*/
 #draggable, table, #boardlist, button {
     -moz-box-shadow:    1px 2px 2px 1px var(--shcolor) !important;
     -webkit-box-shadow: 1px 2px 2px 1px var(--shcolor) !important;
     box-shadow:         1px 2px 2px 1px var(--shcolor) !important;
 }
-/* Giving elements colo(u)r*/
-a {
-    color: var(--acolor) !important;
-}
 
-button, .input2 {
-    color: var(--tcolor) !important;
-    background-color: var(--pbgcolor) !important;
-}
-hr {
-    visibility:hidden;
-}
-p {
-    color: var(--tcolor) !important;
-}
-input {
-    border: 1px solid var(--mcolor) !important;
-}
+
+
+
 html, body, input, textarea, #fileToUpload {
     background-color: var(--bgcolor) !important;
     color: var(--tcolor) !important;
 }
-textarea, button, input[type="file"] {
-    border: 0px !important;
+
+strong { color: #cfcfcf; }
+a {
+    cursor:pointer;
+    text-decoration: none;
+    color: var(--acolor);
+}
+p {
+    margin: 5px;
+    font-family:"Ubuntu";
+    font-size: 10pt;
+    color: var(--tcolor);
+}
+textarea, input {
+    resize: none;
+    width: 100%;
+}
+input {
+    border: 1px solid var(--mcolor);
+}
+html, body {
+  margin:0;
+  padding:0;
+  background-color:black;
+}
+button {
+    cursor: pointer;
+    border: none;
+    color: var(--tcolor);
+    background-color: var(--pbgcolor);
+}
+hr {
+    visibility:hidden;
+}
+.preview {
+    z-index: 1;
+    position: fixed;
+    display: inline-table;
+    border: 1px solid #888;
+    float: left;
+}
+.replyWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    overflow: auto;
+    background-color: var(--pbgcolor);
+}
+.registerWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
 }
 
-/*Fuck you kev*/
-font[color="red"] {
-    color:var(--rtcolor);
+.pic {
+    max-height:170px;
+    max-width:170px;
+    height:auto;
+    width:auto;
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
 }
-b {
-    color: #cfcfcf !important;
+.pic:hover {
+      max-height:700px;
+      max-width:700px;
+      height:auto;
+     width:auto;
+     transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
 }
-.yellow {
-    color: var(--sucolor) !important;
+.largepic{
+    max-height:700px;
+    max-width:700px;
+    height:auto;
+    width:auto;
 }
-div#boardlist {
-    background-color: var(--mcolor) !Important;
-    color:var(--acolor);
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-weight: bold;
+}
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 .bgImage {
-    background:none;
     background-color:var(--bgcolor);
-/*Making the 4kev look good*/
+    text-align: center;
+    }
+.subject    { color: var(--sucolor); }
+.info       { color: grey; }
+.redtext    { color: var(--rtcolor); }
+.adminLogo  { color: purple; }
+.modLogo    { color: red; }
+.userLogo   { color: orange; }
+.userName   { color: #cfcfcf; }
+.topSpacing { height: 40px; }
+.hidevideo  { display:none; }
+.showvideo  { display:block; }
+.boards     { color: color:var(--acolor); }
+.boardName, .form {
+    background-color: var(--pbgcolor);
+    font-size: 10pt;
+    display:inline-block;
+    overflow: hidden;
+}
+.boardlist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    background-color: var(--mcolor);
+}
+.post {
+    background-color: var(--pbgcolor);
+    font-size: 10pt;
+    border-collapse: separate;
+    display: inline-block;
+    margin: 5px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    max-width: 99%;
 }
 
-body > div.bgImage > center > table > tbody > tr > td > center > p:nth-child(1) > b {
-    font-size:40px !important;
-    content:"4Kev" !important;
-}
-/*Fixing kev's insistance to fuck everything up*/
-textarea {
-    box-sizing:inherit !important;
-}
+

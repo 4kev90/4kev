@@ -1,13 +1,13 @@
 a {
     cursor:pointer;
     text-decoration: none;
-    color: lawngreen;
+    color: darkblue;
 }
 p {
     margin: 5px;
-    font-family: Courier, "Lucida Console", monospace;
+    font-family: 'Roboto', sans-serif;
     font-size: 10pt;
-    color: lightblue;
+    color: black;
 }
 textarea, input {
     resize: none;
@@ -16,19 +16,16 @@ textarea, input {
 html, body {
     margin:0;
     padding:0;
-    background-color:#05080c;
+    background-color: #eff3f8;
 }
 body {
     margin-left:12%;
 }
 button {
-  color: lightblue;
+  color: white;
   background-color: #004899;
   cursor: pointer;
   border: none;
-}
-hr {
-    border-color: purple;
 }
 img {
     max-width: 100%;
@@ -37,16 +34,15 @@ img {
 #preview {
     z-index: 1;
     position: fixed;
-    display: inline-table;
-    border: 1px solid #888;
-    float: left;
+    display: inline;
+    border: 1px solid #004899;
 }
 .replyWindow {
     display: none; 
     position: fixed;
     z-index: 1;
     overflow: auto;
-    background-color:#17202a;
+    background-color:#ccdaea;
     border: 1px solid #004899;
 }
 .registerWindow {
@@ -65,37 +61,32 @@ img {
     cursor: pointer;
 }
 .bgImage {
-    background: url("http://i.imgur.com/fKZzG9A.jpg");
-    background-repeat: repeat-x;
+    /*background: url("https://cdn.theatlantic.com/assets/media/img/mt/2016/03/RTX283V4/lead_960.jpg?1457553386");
+    background-repeat: repeat-x;*/
     text-align: center;
     }
-.subject    { color: yellow; }
-.info       { color: grey; }
+.subject    { color: darkred; }
+.info       { color: black; }
 .redtext    { color: red; }
 .adminLogo  { color: purple; }
 .modLogo    { color: red; }
 .userLogo   { color: orange; }
-.userName   { color: lawngreen; }
+.userName   { color: darkgreen; }
 .topSpacing { height: 40px; }
 .hidevideo  { display:none; }
 .showvideo  { display:block; }
-.boards     { color: lawngreen; }
 .arrow      { color: #004899; }
 .linksToReplies { font-size: 8pt; }
 .boardName {
-    background-color:#17202a;
     font-size: 10pt;
     display:inline-block;
     overflow: hidden;
-    border-radius: 5px;
-    border: 1px solid #004899;
 }
 .form {
-    background-color:#17202a;
+    background-color:#ccdaea;
     font-size: 10pt;
     display:inline-block;
     overflow: hidden;
-    border: 1px solid #004899;
 }
 .boardlist {
     padding: 10px;
@@ -105,11 +96,10 @@ img {
     z-index: 999;
     width: 10%;
     height:100%;
-    background-color:#17202a; 
-    border: 1px solid #004899;
+    background-color:#ccdaea; 
 }
 .post {
-    background-color:#17202a;
+    background-color:#ccdaea;
     font-size: 10pt;
     border-collapse: separate;
     display: inline-block;
@@ -117,11 +107,11 @@ img {
     margin-bottom: 0px;
     overflow: hidden;
     max-width: 99%;
-    border-radius: 5px;
-    border: 1px solid #004899;
+    border-right: 1px solid #b2c8e0;
+    border-bottom: 1px solid #b2c8e0;
 }
 .op {
-    background-color:#1f3d1c;
+    background-color: lightgreen;
 }
 
 
