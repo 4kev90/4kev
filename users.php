@@ -18,12 +18,12 @@ if($_GET['user'])
 <title><?php echo $userName; ?></title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="/style.css?v=<?=time();?>">
-<?php
-	if($_COOKIE["style"]) {
+<?php 
+    if($_COOKIE["style"]) 
         $style = $_COOKIE["style"];
-        if($style != 'cyber')
-            echo '<link rel="stylesheet" type="text/css" href="/' . $style . '.css?v=' . time() . '"';
-    }
+    else
+        $style = $defaultTheme;
+    echo '<link rel="stylesheet" type="text/css" href="/themes/' . $style . '.css?v=' . time() . '">'; 
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

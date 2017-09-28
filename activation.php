@@ -7,7 +7,6 @@ include('connectToDatabase.php');
 $con = connect_to_database();
 
 $cle = $_GET['cle'];
-$cle = str_replace("'", "", $cle);
 
 $sql = "UPDATE users SET confirmed = 1 WHERE cle = '$cle';";
 $res = mysqli_query($con, $sql);

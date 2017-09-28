@@ -22,6 +22,12 @@ if($_GET['board']) {
 else
     header('Location: http://4kev.org');
 
+//get page
+if($_GET['page']) 
+    $page = $_GET['page'];
+else
+    $page = 1;
+
 //check if user is a mod
 $sessionID = $_SESSION['ID'];
 $sql = "SELECT * FROM users WHERE ID = $sessionID";
@@ -51,6 +57,22 @@ $ipAddr = $_SERVER['REMOTE_ADDR'];
 date_default_timezone_set('Europe/Paris');
 $date = date('d/m/Y H:i:s', time());
 $image = basename($_FILES["fileToUpload"]["name"]);
+if($options == 'fortune')
+    $fortune = rand(0,12);
+
+//you must wait 2 minutes before starting a new thread
+if($comm) {
+    $sql = 'SELECT * FROM posts WHERE ipAddress = "'.$ipAddr.'" ORDER BY ID DESC LIMIT 1';
+    $res = mysqli_query($con, $sql);
+    while($row = mysqli_fetch_assoc($res)) {
+        $lastThread = $row['dateTime'];
+
+        if(compareDates($lastThread, $date) < 120) {
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName . '&message='.compareDates($lastThread, $date));
+            die;
+        }
+    }
+}
 
 //delete post
 if($_POST['delete'] && $isMod) {
@@ -154,6 +176,28 @@ if($comm) {
         // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                //create thumbnail
+                $image = new Imagick();
+                $image_filehandle = fopen('uploads/' . $newName, 'a+');
+                $image->readImageFile($image_filehandle);
+
+                $height = $image->getImageHeight();
+                $width  = $image->getImageWidth();
+
+                if($height >= $width) {
+                    $width *= 250 / $height;
+                    $height = 250;
+                }
+                else {
+                    $height *= 250 / $width;
+                    $width = 250;
+                }
+
+                $image->scaleImage($width,$height,FALSE);
+
+                $image_icon_filehandle = fopen('thumbnails/' . $newName, 'w');
+                if($image->writeImageFile($image_icon_filehandle)) {}
+    
                 //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
             } else {
                 //echo "Sorry, there was an error uploading your file.";
@@ -162,7 +206,7 @@ if($comm) {
     }
 
     if($uploadOk == 1) {
-        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn, isMod) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn', '$isMod')";
+        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$loggedIn', '$isMod', '$fortune')";
         mysqli_query($con, $sql);  
     } 
     
@@ -181,36 +225,41 @@ header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
     if($_COOKIE["style"]) 
         $style = $_COOKIE["style"];
     else
-        $style = 'cyber';
-    echo '<link rel="stylesheet" type="text/css" href="themes/' . $style . '.css?v=' . time() . '">'; 
+        $style = $defaultTheme;
+    echo '<link rel="stylesheet" type="text/css" href="/themes/' . $style . '.css?v=' . time() . '">'; 
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="myjs.js?v=<?=time();?>" ></script>
+<script type="text/javascript" src="/myjs.js?v=<?=time();?>" ></script>
+
 </head>
 <body>
 
+<?php loginForm($con, $boardName); ?>
+
 <div class="bgImage">
 
-    <?php //print a message if a post has been reported
+    <?php
+
+        //print a message if a post has been reported
         if($_POST['report'])
             echo "<script> alert('Reported'); </script>";
+
+        //you must wait 2 minutes before posting a new thread
+        if($_GET['message'])
+            echo '<script> alert("You must wait two minutes before starting a new thread."); </script>';
     ?>
 
-    <?php boardList($con); ?>
+    <?php boardList($con, $boardName); ?>
 
+    <br>
+    <div id="boardName">
     <!--BANNER-->
     <?php banner(); ?>
-
-    <br><br>
-    <div class="boardName">
-    <p style="font-size:30px"><strong><?php echo $boardName; ?></strong></p>
+    <p style="font-size:30px"><strong><?php echo ucfirst($boardName); ?></strong></p>
     <?php echo $top_message; ?>
     </div>
     <br><br>
-
-    <!--LOGIN BAR-->
-    <?php loginBar($con, $boardName); ?>
 
     <!--POST THREAD BUTTON-->
     <button id="showForm" style="text-align:center; height:30px;" onclick="showForm()">Start a New Thread</button>
@@ -224,7 +273,7 @@ header('Location: ' . $_SERVER['PHP_SELF'] . '?board=' . $boardName);
                 $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
                 $res = mysqli_query($con, $sql);
                     while($row = mysqli_fetch_assoc( $res ))
-                        echo "<p class='userName'><strong>" . $row['name'] . "</strong></p>";
+                        echo "<strong><p class='userName'>" . $row['name'] . "</p></strong>";
             }
             else
                 echo '<textarea style="width:300px;" placeholder="name" rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
@@ -248,18 +297,20 @@ $selectRes = mysqli_query($con, $selectSQL);
 $cont = 0;
 while($row = mysqli_fetch_assoc( $selectRes )) {
     //if counter is less than the maximum allowed threads
-    if($cont < 50) {
+    if($cont < 150) {
         if(($row['replyTo'] == 0) && ($row['board'] == $boardName)) {
-            $cont = $cont+1;  
+            $cont = $cont+1; 
+            if($cont > (($page-1)*15) && $cont <= ($page*15)) { 
+            
             //prepare variables
-            $rowImage = "uploads/" . htmlspecialchars($row['image']);
+            $rowImage = "/thumbnails/" . htmlspecialchars($row['image']);
             $rowImage = str_replace("onerror","whatnow", $rowImage);  //protection against xss attack
             $imageID = 'img' . $row['ID'];
             $rowName = htmlspecialchars($row['name']);
             $rowSubject = htmlspecialchars($row['subject']);
             $rowComment = htmlspecialchars($row['commento']);
             $id = $row['ID'];
-            $space = str_repeat('&nbsp;', 2);  //spaces between picture and text
+            $space = str_repeat('&nbsp;', 10);
 
             //get number of replies in the thread
             $x = "SELECT COUNT(*) AS replies FROM posts WHERE replyTo = $id";
@@ -268,15 +319,15 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
             $q = $z['replies'];
 
             //display posts
-            echo '<div class="post">';
+            echo '<div class="post op">';
 
             //show picture if present
             if($row['image'])
-                echo "<img style='float:left;' class='pic' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
+                echo "<img style='float:left;' class='thumbnail' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
             
             //PRINT POST INFO
             echo "<form action='#' method='post' style='vertical-align:top; display: inline-block';>";
-            echo "<p style='padding-left:10px;'>";
+            echo "<p style='padding-left:10px; padding-right:10px;'>";
 
             //print subject
             echo "<strong><span class='subject'>{$rowSubject}</span></strong>";
@@ -294,11 +345,11 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
 
             if(!$row['name'])
                 echo("Anonymous");
-
+/*
             //print link to user profile is name is registered
             if($row['loggedIn'] == 1)
-                echo nl2br("<a href='users.php?user=$rowName'>$rowName</a>");
-            else
+                echo nl2br("<a href='https://www.4kev.org/users.php?user=$rowName'>$rowName</a>");
+            else */
                 echo nl2br("$rowName");
 
             echo "</strong></span>";
@@ -307,17 +358,14 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
             echo "<span class='info'> {$row['dateTime']}";
 
             //print post number, number of replies and link to thread
-            echo " No.{$row['ID']}";
-
-            //print number of replies
-            echo " Replies:$q</span>";
+            echo " No.{$row['ID']}</span>";
 
             //print link to thread
-            echo " [<a href=threads.php?op=".$id.">Reply</a>]";
+            echo " [<a href=/threads.php?op=".$id.">Reply</a>]";
 
             //print blue arrow
             $hiddenButton = (string)$row['ID'] . 'btn';
-            echo " <a class='blue' onclick='showButton(\"$hiddenButton\")'>▶</a>";
+            echo " <a class='arrow' onclick='showButton(\"$hiddenButton\")'>▶</a>";
 
             //show delete button if user is a mod, else show report button
             if($isMod)
@@ -337,6 +385,12 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
                 } 
 
             echo "<br><br>";
+
+            //fortune
+            if($row['fortune']) {
+                fortune($row['fortune']);
+                echo "<br><br>";
+            }
 
             //PRINT COMMENT
             //echo "<p style='vertical-align:top; display: inline-block'>";
@@ -378,7 +432,143 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
                 }
                 echo nl2br("</span>");
             }
-            echo '</p></form></div><br>';
+            echo '</p></form></div>';
+
+            // THREAD EXPANSION
+            echo '<p class="info"><a title="Expand thread" id="expandButton'.$id.'" class="arrow" onclick="expand('.$id.')">▼</a> ';
+
+            //print number of replies
+            echo $q . ' replies';
+
+            echo '</p>';
+
+            //#################################################################################################################
+
+            //PRINT LAST REPLIES
+            echo '<div id="replies'.$id.'">';
+            $sqlReplies = "(SELECT * FROM posts WHERE replyTo = " . $row['ID'] . " ORDER BY ID DESC LIMIT 3) ORDER BY ID ASC;";
+            $resReplies = mysqli_query($con, $sqlReplies);
+            while($rowReplies = mysqli_fetch_assoc( $resReplies )) {
+                //prepare variables
+                $rowImage = "/thumbnails/" . htmlspecialchars($rowReplies['image']);
+                $imageID = 'img' . $rowReplies['ID'];
+                $rowName = htmlspecialchars($rowReplies['name']);
+                $rowComment = htmlspecialchars($rowReplies['commento']);
+                $id = $rowReplies['ID'];
+                $space = str_repeat('&nbsp;', 2);  //spaces between picture and text
+
+                //display posts
+                echo '<div class="post">';
+
+                //show picture if present
+                if($rowReplies['image'])
+                    echo "<img style='float:left;' class='thumbnail' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
+
+                //PRINT POST INFO
+                echo "<form action='#' method='post' style='vertical-align:top; display: inline-block';>";
+                echo "<p style='padding-left:10px; padding-right:10px;'>";
+
+                //print user logo
+                if($rowReplies['isMod'] == 1)
+                    echo " <span style='cursor:pointer;' title='Admin' class='adminLogo'>☯</span> ";
+                else if($rowReplies['isMod'] == 2)
+                    echo " <span style='cursor:pointer;' title='Mod' class='modLogo'>☯</span> ";
+                else if($rowReplies['loggedIn'] == 1)
+                    echo " <span style='cursor:pointer;' title='Registered User' class='userLogo'>&#9733</span> ";
+
+                //print name
+                echo "<span class='userName'><strong> ";
+
+                if(!$rowReplies['name'])
+                    echo("Anonymous");
+
+                //print link to user profile is name is registered
+                if($rowReplies['loggedIn'] == 1)
+                    echo nl2br("<a href='/users.php?user=$rowName'>$rowName</a>");
+                else
+                    echo nl2br("$rowName");
+
+                echo "</strong></span>";
+
+                //print date and time
+                echo "<span class='info'> {$rowReplies['dateTime']}";
+
+                //print post number
+                echo " No.{$rowReplies['ID']}</span>";
+
+                //print blue arrow
+                $hiddenButton = (string)$rowReplies['ID'] . 'btn';
+                echo " <a class='arrow' onclick='showButton(\"$hiddenButton\")'>▶</a>";
+
+                //show delete button if user is a mod, else show report button
+                if($isMod)
+                    echo " <button id='$hiddenButton' style='display:none;' type='submit' name='delete' value='{$rowReplies['ID']}'>Delete</button>";
+                else
+                    echo " <button id='$hiddenButton' style='display:none;' type='submit' name='report' value='{$rowReplies['ID']}'>Report</button>";
+
+
+
+                //check if post is banned and echo message
+                $sql2 = "SELECT * FROM bannedPosts";
+                $res2 = mysqli_query($con, $sql2);
+                while($row2 = mysqli_fetch_assoc($res2))
+                    if($rowReplies['ID'] == $row2['post']) {
+                        echo "<span style='color:red'><strong>(User was banned for this post)</strong></span>";
+                        break;
+                    } 
+
+                echo "<br><br>";
+
+                //fortune
+                if($rowReplies['fortune']) {
+                    fortune($rowReplies['fortune']);
+                    echo "<br><br>";
+                }
+
+                //PRINT COMMENT
+                //divide comment into lines
+                $lines = explode("\n", $rowComment);
+         
+                //apply redtext
+                foreach ($lines as $line) {
+                    //check for redtext
+                    $checkRed = htmlspecialchars_decode($line);
+                    if($checkRed[0] == '>')
+                        echo nl2br("<span class='redtext'>");
+                    else 
+                        echo nl2br("<span>");
+        
+            
+                    //divide line into words
+                    $words = explode(" ", $line);
+                    foreach ($words as $word) {
+         
+                       $word = checkYoutube($word);
+                       $word = wordFilter($word);
+            
+                        //if word is a link to a post, show post preview
+                        $checkLink = htmlspecialchars_decode($word);
+                        if($checkLink[0] == '>' && $checkLink[1] == '>') {
+                            $postLink =  preg_replace("/[^0-9]/","", basename($word)); 
+                            $sql="SELECT * FROM posts WHERE ID = $postLink";
+                            $res = mysqli_query($con, $sql);
+                            while($row = mysqli_fetch_assoc( $res )) 
+                                $linkComm = htmlspecialchars(addslashes($row['commento']));
+                            $linkComm = htmlspecialchars(preg_replace("/\r\n|\r|\n/",'<br/>',$linkComm));
+                            echo nl2br("<A onMouseOver=\"post_preview('$linkComm')\" onMouseOut='hide_preview()'>{$word} </A> ");
+                        }
+                       
+                        //print original word
+                        else
+                            echo nl2br("$word "); 
+                    }
+                    echo nl2br("</span>");
+                }
+                echo '</p></form></div><br>';
+            }
+            echo '</div>';
+            echo '<hr>';
+        }
         }
     }
     else if (($row['replyTo']) == 0 && ($row['board'] == $boardName)) {
@@ -392,7 +582,30 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
     }
 }
 
+//count total threads
+$sql = "SELECT * FROM posts WHERE board = '{$boardName}' AND bump;";
+$res = mysqli_query($con, $sql);
+$threads = 0;
+while($row = mysqli_fetch_assoc($res)) {
+    $threads++;
+}
+//print links to pages
+$pages = ceil($threads / 15);
+
+echo '<p style="text-align:center">';
+
+for($i = 1; $i <= $pages; $i++) {
+    //$link = 'boards/' . $boardName . '/' . $i;
+    $link = $_SERVER['PHP_SELF'] . '?board=' . $boardName . '&page=' . $i;
+    echo '<a href="' . $link . '"><button class="pageButton">' . $i . '</button></a> ';
+}
+
+
+
+echo '</p><br>';
+
+
+
 ?>
-<br>
 </body>
 </html>

@@ -17,6 +17,39 @@ else
     $style = $_COOKIE["style"];
 
 
+//UPDATE ACTIVE USERS
+$ipAddr = $_SERVER['REMOTE_ADDR'];
+date_default_timezone_set('Europe/Paris');
+$date = date('d/m/Y H:i:s', time());
+
+//delete old user log
+$sql = "DELETE FROM activeUsers WHERE ipAddress = '$ipAddr';";
+$res = mysqli_query($con, $sql);
+
+//insert new user log
+$sql = "INSERT INTO activeUsers (ipAddress, dateTime) VALUES ('$ipAddr','$date')";
+$res = mysqli_query($con, $sql);
+
+//delete logs older than x minutes
+$sql = "SELECT * FROM activeUsers";
+$res = mysqli_query($con, $sql);
+$activeUsers = 0;
+while($row = mysqli_fetch_assoc($res)) {
+    if(compareDates($row['dateTime'], $date) > 86400) {
+        $sql2 = "DELETE FROM activeUsers WHERE ipAddress = '".$row['ipAddress']."'";
+        $res2 = mysqli_query($con, $sql2);
+    }
+    else $activeUsers++;
+}
+
+//UPDATE HIT COUNTER
+$sql = "SELECT * FROM hitCounter";
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+    $count = $row['count'];
+    $a = "UPDATE hitCounter SET count=($count+1) WHERE count=$count";
+    $b = mysqli_query($con, $a);
+}
 ?>
 
 <HTML>
@@ -24,13 +57,13 @@ else
 <title>4kev</title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-<?php 
+<?php
     if($_GET['style'])
         $style = $_GET['style'];
     else if($_COOKIE["style"]) 
         $style = $_COOKIE["style"];
     else
-        $style = 'cyber';
+        $style = $defaultTheme;
     echo '<link rel="stylesheet" type="text/css" href="themes/' . $style . '.css?v=' . time() . '">'; 
 ?>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -41,23 +74,21 @@ else
 
 <body>
 
+<?php loginForm($con); ?>
 
 <div class="bgImage">
 
     <?php boardList($con); ?>
 
+    <br>
+    <div id="boardName">
     <!--BANNER-->
     <?php banner(); ?>
-
-    <br><br>
-    <div class="boardName">
     <p style="font-size:30px"><strong>Welcome to 4kev</strong></p>
     <?php echo $top_message; ?>
     </div>
-    <br><br>
 
-    <!--LOGIN BAR-->
-    <?php loginBar($con); ?>
+    <br><br>
 
     <!--ERROR / CONFIRMATION MESSAGE -->
     <?php
@@ -97,8 +128,6 @@ else
         <br><hr>
 </div>
 
-
-
 <div style="display:inline-block; float:left; width:64%">
     
     <div class="post" style="float:right; width:77%; margin-right: 10px;">
@@ -109,7 +138,7 @@ else
             $res = mysqli_query($con, $sql);
             echo "<strong><p style='text-align:center'>LAST POSTS</p></strong>";
             $cont = 0;
-            while(($cont < 15) && $row = mysqli_fetch_assoc( $res )) {
+            while(($cont < 30) && $row = mysqli_fetch_assoc( $res )) {
                 if($row['board'] != "test" && $row['commento']) {
 
                     //stampa link to thread
@@ -117,7 +146,7 @@ else
                         $num = $row['replyTo'];
                     else
                         $num = $row['ID'];
-                    $threadlink = "http://4kev.org/threads.php?op=" . $num . "#" . $row['ID'];
+                    $threadlink = "http://4kev.org/threads/" . $num . "#" . $row['ID'];
 
                     //stampa board
                     echo "<p><a href='$threadlink'><strong>No.{$row['ID']} {$row['board']}</strong><br></a>";
@@ -144,71 +173,54 @@ else
 
 <div style="display:inline-block; float:right; width:36%">
     <div class="post" style="width:58%">
-<?php
-//display last images
-$sql = "SELECT * FROM posts ORDER BY ID DESC";
-$res = mysqli_query($con, $sql);
-echo "<strong><p style='text-align:center'>LAST IMAGES</p></strong>";
-$cont = 0;
-while(($cont < 5) && $row = mysqli_fetch_assoc( $res )) {
-    if($row['board'] != "test" && $row['image']) {
+        <?php
+            //display last images
+            $sql = "SELECT * FROM posts ORDER BY ID DESC";
+            $res = mysqli_query($con, $sql);
+            echo "<strong><p style='text-align:center'>LAST IMAGES</p></strong>";
+            $cont = 0;
+            while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
+                if($row['board'] != "test" && $row['image']) {
 
-        //link to thread
-        if($row['replyTo'])
-            $num = $row['replyTo'];
-        else
-            $num = $row['ID'];
-        $threadlink = "http://4kev.org/threads.php?op=" . $num  . "#" . $row['ID'];
+                    //link to thread
+                    if($row['replyTo'])
+                        $num = $row['replyTo'];
+                    else
+                        $num = $row['ID'];
+                    $threadlink = "http://4kev.org/threads/" . $num  . "#" . $row['ID'];
 
-        //board
-        echo "<p style='text-align:center'><a href='$threadlink'><strong>No.{$row['ID']} {$row['board']}<br></strong></a></p>";
+                    //board
+                    echo "<p style='text-align:center'><strong>No.{$row['ID']} {$row['board']}<br></strong></p>";
 
-        //picture
-        $pic = $row['image'];
-        echo "<p style='text-align:center'><a href='$threadlink'><img style='max-height:170px; max-width:170px;' src='uploads/$pic'></a></p>";
+                    //picture
+                    $pic = $row['image'];
+                    echo "<p style='text-align:center'><a href='$threadlink'><img style='max-height:170px; max-width:170px;' src='thumbnails/$pic'></a></p>";
 
-        $cont++;
-    }
-}
-?>
+                    $cont++;
+                }
+            }
+        ?>
+    </div>
 </div>
-</div>
-
-
-
-
 <div style="clear:both" />
-<br><hr>
-<div style="clear:both">
+<br>
+<hr>
 
-<?php
-    $sql = "SELECT * FROM hitCounter";
-    $res = mysqli_query($con, $sql);
-    while($row = mysqli_fetch_assoc($res)) {
-        $count = $row['count'];
-        $a = "UPDATE hitCounter SET count=($count+1) WHERE count=$count";
-        $b = mysqli_query($con, $a);
-    }
-?>
-<div class="footer">
-<p align="center" style="clear:both;">
-    <a href="stats.php">Stats</a> | 
-    <a href="rules.php">Rules</a> | 
-    Visits: <?php echo $count; ?>
-</p>
-<p align="center"> 
-    <a href="index.php?style=4kev">4kev</a> | 
-    <a href="index.php?style=cyber">Cyber</a> | 
-    <a href="index.php?style=tomorrow">Tomorrow</a> | 
-    <a href="index.php?style=insomnia">Insomnia</a> | 
-    <a href="index.php?style=yotsuba">Yotsuba</a> | 
-    <a href="index.php?style=yotsuba-b">Yotsuba-B</a> | 
-    <a href="index.php?style=photon">Photon</a> | 
-    <!--<a href="index.php?style=zen">Zen</a>-->
-</p>
+<!--RULES-->
+<div id='rules' style='display:none; text-align:center'>
+    <div class="post">
+        <p align='left'>
+            1) be polite to other users<br>
+            2) do not spam or flood the website<br>
+            3) do not post pornography or disturbing content<br>
+            4) critics about the website must be constructive<br>
+        </p>
+    </div>
+    <hr>
 </div>
-</div>
-</div>
+
+<?php footer($con); ?>
+
 <br>
 </body>
 </HTML>
