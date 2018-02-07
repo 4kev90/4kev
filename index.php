@@ -16,6 +16,15 @@ if($_GET['style']) {
 else
     $style = $_COOKIE["style"];
 
+//UPDATE ACTIVE HOURS
+date_default_timezone_set('Europe/Paris');
+$hour = date('H', time());
+$sql = "SELECT * FROM activeHours WHERE hour = " . $hour;
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) 
+    $visitsUpdated = $row['visits'] + 1;
+$sql = "UPDATE activeHours SET visits = " . $visitsUpdated . " WHERE hour = '" . $hour . "'";
+$res = mysqli_query($con, $sql);
 
 //UPDATE ACTIVE USERS
 $ipAddr = $_SERVER['REMOTE_ADDR'];
@@ -55,24 +64,13 @@ while($row = mysqli_fetch_assoc($res)) {
 <HTML>
 <head>
 <title>4kev</title>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-<?php
-    if($_GET['style'])
-        $style = $_GET['style'];
-    else if($_COOKIE["style"]) 
-        $style = $_COOKIE["style"];
-    else
-        $style = $defaultTheme;
-    echo '<link rel="stylesheet" type="text/css" href="themes/' . $style . '.css?v=' . time() . '">'; 
-?>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>
-<script src="jquery-3.2.0.min.js"></script>
+<?php printHead(); ?>
 </head>
 
 <body>
+
+
 
 <?php loginForm($con); ?>
 
@@ -81,14 +79,13 @@ while($row = mysqli_fetch_assoc($res)) {
     <?php boardList($con); ?>
 
     <br>
-    <div id="boardName">
-    <!--BANNER-->
-    <?php banner(); ?>
-    <p style="font-size:30px"><strong>Welcome to 4kev</strong></p>
-    <?php echo $top_message; ?>
-    </div>
+        <!--BANNER-->
+        <?php banner(); ?>
+        <br>
+        <p id="boardName"><strong>Welcome to 4kev</strong></p>
+        <?php echo $top_message; ?>
 
-    <br><br>
+    <br>
 
     <!--ERROR / CONFIRMATION MESSAGE -->
     <?php
@@ -128,9 +125,9 @@ while($row = mysqli_fetch_assoc($res)) {
         <br><hr>
 </div>
 
-<div style="display:inline-block; float:left; width:64%">
+<div style="display:inline-block; float:left; width:75%">
     
-    <div class="post" style="float:right; width:77%; margin-right: 10px;">
+    <div class="post" style="float:right; width:93%; margin-right: 10px;">
 
         <?php
             //display last posts
@@ -138,8 +135,8 @@ while($row = mysqli_fetch_assoc($res)) {
             $res = mysqli_query($con, $sql);
             echo "<strong><p style='text-align:center'>LAST POSTS</p></strong>";
             $cont = 0;
-            while(($cont < 30) && $row = mysqli_fetch_assoc( $res )) {
-                if($row['board'] != "test" && $row['commento']) {
+            while(($cont < 50) && $row = mysqli_fetch_assoc( $res )) {
+                if($row['board'] != "test" && $row['board'] != "traps" && $row['commento']) {
 
                     //stampa link to thread
                     if($row['replyTo'])
@@ -171,8 +168,8 @@ while($row = mysqli_fetch_assoc($res)) {
     </div>
 </div>
 
-<div style="display:inline-block; float:right; width:36%">
-    <div class="post" style="width:58%">
+<div style="display:inline-block; float:right; width:25%">
+    <div class="post" style="width:80%">
         <?php
             //display last images
             $sql = "SELECT * FROM posts ORDER BY ID DESC";
@@ -180,7 +177,7 @@ while($row = mysqli_fetch_assoc($res)) {
             echo "<strong><p style='text-align:center'>LAST IMAGES</p></strong>";
             $cont = 0;
             while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
-                if($row['board'] != "test" && $row['image']) {
+                if($row['board'] != "test" && $row['board'] != "traps" && $row['image']) {
 
                     //link to thread
                     if($row['replyTo'])
@@ -194,8 +191,12 @@ while($row = mysqli_fetch_assoc($res)) {
 
                     //picture
                     $pic = $row['image'];
-                    echo "<p style='text-align:center'><a href='$threadlink'><img style='max-height:170px; max-width:170px;' src='thumbnails/$pic'></a></p>";
-
+                    if (strpos(strtolower($pic), 'pdf'))
+                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='pdflogo.png'></a></p>";
+                    else if (!strpos($pic, 'webm') && !strpos($pic, 'mp3')) 
+                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='thumbnails/$pic'></a></p>";
+                    else
+                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='video.png'></a></p>";
                     $cont++;
                 }
             }
@@ -205,6 +206,8 @@ while($row = mysqli_fetch_assoc($res)) {
 <div style="clear:both" />
 <br>
 <hr>
+
+</div>
 
 <!--RULES-->
 <div id='rules' style='display:none; text-align:center'>

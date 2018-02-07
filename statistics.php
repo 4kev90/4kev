@@ -11,19 +11,7 @@ $con = connect_to_database();
 <HTML>
 <head>
 <title>Statistics</title>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-<?php 
-    if($_COOKIE["style"]) 
-        $style = $_COOKIE["style"];
-    else
-        $style = $defaultTheme;
-    echo '<link rel="stylesheet" type="text/css" href="themes/' . $style . '.css?v=' . time() . '">'; 
-?>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="../../myjs.js?v=<?=time();?>" ></script>
-<script src="jquery-3.2.0.min.js"></script>
+<?php printHead(); ?>
 </head>
 <body>
 
@@ -32,16 +20,12 @@ $con = connect_to_database();
 <?php boardList($con); ?>
 
 <br>
-    <div id="boardName">
     <!--BANNER-->
     <?php banner(); ?>
-    <p style="font-size:30px;"><strong>statistics</strong></p>
+    <br>
+    <p id="boardName"><strong>Statistics</strong></p>
     <?php echo $top_message; ?>
-    </div>
 
-<br><br>
-<hr>
-</div>
 <br>
 
 <?php
@@ -67,10 +51,8 @@ echo '<p>Total posts: ' . $q . '</p>';
 $size = 0;
 $sql = "SELECT image FROM posts WHERE image";
 $res = mysqli_query($con, $sql);
-while($row = mysqli_fetch_assoc($res)) {
-	$file = 'uploads/' . $row['image'];
+while($row = mysqli_fetch_assoc($res)) 
 	$size += filesize('uploads/' . $row['image']);
-}
 
 echo '<p>Total file size: ' . round(($size / 1000000), 3) . ' MB</p>';
 
@@ -134,14 +116,30 @@ foreach($boards as $board) {
 	$y = (mysqli_query($con, $x));
 	$z = mysqli_fetch_assoc($y);
 	$q = $z['boardPosts'];
-	for($i = 0; $i < ($q / 10); $i++)
-		echo '#';
+	for($i = 0; $i < ($q / 20); $i++)
+		echo '▀';
 	echo ' ';
 	echo $q;
 	echo ' ';
 	echo $board;
 	echo ' ';
 	echo '<br>';
+}
+
+echo '</p>';
+
+// VISITS PER HOUR
+echo '<p>Visits per hour:</p>';
+echo '<p>';
+
+$sql = "SELECT * FROM activeHours";
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+	echo $row['hour'] . " ";
+	for($i = 0; $i < $row['visits']; $i+=10)
+		echo '▀';
+	echo '<br>';
+	
 }
 
 echo '</p>';

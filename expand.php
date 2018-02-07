@@ -11,10 +11,25 @@ if($_GET['num'])
 //connect to database
 $con = connect_to_database();
 
+//check if user is a mod
+$sessionID = $_SESSION['ID'];
+$sql = "SELECT * FROM users WHERE ID = $sessionID";
+$res = mysqli_query($con, $sql);
+while($row = mysqli_fetch_assoc($res)) {
+    if($row['isMod'] == 1)
+        $isMod = 1;
+    else if($row['isMod'] == 2)
+        $isMod = 2;
+}
+
 	//PRINT LAST REPLIES
             $sqlReplies = "SELECT * FROM posts WHERE replyTo = " . $num . " ORDER BY ID ASC;";
             $resReplies = mysqli_query($con, $sqlReplies);
             while($rowReplies = mysqli_fetch_assoc( $resReplies )) {
+
+                printPost($con, $isMod, $rowReplies);
+
+                /*
                 //prepare variables
                 $rowImage = "/thumbnails/" . htmlspecialchars($rowReplies['image']);
                 $imageID = 'img' . $rowReplies['ID'];
@@ -60,7 +75,7 @@ $con = connect_to_database();
                 echo "<span class='info'> {$rowReplies['dateTime']}";
 
                 //print post number
-                echo " No.{$rowReplies['ID']}</span>";
+                echo " <a class='quickReply' onclick='formAction(".$rowReplies['replyTo'].")'>{$rowReplies['ID']}</a>";
 
                 //print blue arrow
                 $hiddenButton = (string)$rowReplies['ID'] . 'btn';
@@ -116,12 +131,7 @@ $con = connect_to_database();
                         $checkLink = htmlspecialchars_decode($word);
                         if($checkLink[0] == '>' && $checkLink[1] == '>') {
                             $postLink =  preg_replace("/[^0-9]/","", basename($word)); 
-                            $sql="SELECT * FROM posts WHERE ID = $postLink";
-                            $res = mysqli_query($con, $sql);
-                            while($row = mysqli_fetch_assoc( $res )) 
-                                $linkComm = htmlspecialchars(addslashes($row['commento']));
-                            $linkComm = htmlspecialchars(preg_replace("/\r\n|\r|\n/",'<br/>',$linkComm));
-                            echo nl2br("<A onMouseOver=\"post_preview('$linkComm')\" onMouseOut='hide_preview()'>{$word} </A> ");
+                            echo nl2br("<A style='text-decoration: underline;' href='#$postLink' onmouseover='preview(event, $postLink)' onmouseout='hidePostPreview()'>$word</A>");
                         }
                        
                         //print original word
@@ -131,6 +141,8 @@ $con = connect_to_database();
                     echo nl2br("</span>");
                 }
                 echo '</p></form></div><br>';
+                */
+
             }
 
 

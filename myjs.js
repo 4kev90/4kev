@@ -36,6 +36,26 @@ function postPreview(event, num) {
     document.getElementById('preview').innerHTML = content;
     document.getElementById('preview').style.display = 'block';
 }
+
+function preview(event, num) {
+    var x = event.clientX + 10;
+    var y = event.clientY - 50;
+    document.getElementById('preview').style.left = x;
+    document.getElementById('preview').style.top = y;
+
+    var z = '/preview.php?num=' + num;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById('preview').innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", z, true);
+    xhttp.send();
+
+    document.getElementById('preview').style.display = 'block';
+}
+
 function hidePostPreview() {
     document.getElementById('preview').innerHTML = '';
     document.getElementById('preview').style.display = 'none';
@@ -58,18 +78,25 @@ function showButton(x) {
 function resizepic(id) {
 
     var pic = document.getElementById(id).src;
-    if(pic.includes("thumbnails")) {
+    if (pic.indexOf("thumbnails") !== -1) {        
+        document.getElementById(id).style.filter = 'invert(100%)';
         pic = pic.replace("thumbnails", "uploads");
         document.getElementById(id).src = pic;
+        document.getElementById(id).onload = function() { document.getElementById(id).style.filter = 'invert(0%)'; };
     }
+        
     else {
         pic = pic.replace("uploads", "thumbnails");
         document.getElementById(id).src = pic;
+        
     }
 }
 
 function showRules() {
     document.getElementById('rules').style.display = 'block';
+}
+function showStatistics() {
+    document.getElementById('statistics').style.display = 'block';
 }
 /*
 function expand(num) {
@@ -108,6 +135,10 @@ function expand(num) {
     }
 }
 
+function formAction(ID) {
+    var x = '/newPost.php?op=' + ID;
+    document.getElementById('formAction').action = x;
+}
 
 
 $(document).ready(function(){
@@ -123,8 +154,7 @@ $(document).ready(function(){
         else
             $(this).html("embed");
     });
-
-    $(".quickReply").click(function(event){
+    $(document).on('click', '.quickReply', function(event){
         var x = event.clientX + 10;
         var y = event.clientY;
         $(".replyWindow").css("left", x);
@@ -133,6 +163,11 @@ $(document).ready(function(){
         $("#linky").val(str1);
         $(".replyWindow").css("display", "inline-block");
     });
+
+    $(".quickReply2").click(function(event){
+        $(this).html() = "test";
+    });
+
         $(".close").click(function(event){
             $(".replyWindow").css("display", "none");
     });
@@ -142,4 +177,5 @@ $(document).ready(function(){
     });
 
     $( function() { $( "#draggable" ).draggable(); } );
+    $('#draggable').draggable();
 });

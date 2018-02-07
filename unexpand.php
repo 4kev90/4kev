@@ -15,6 +15,9 @@ $con = connect_to_database();
             $sqlReplies = "(SELECT * FROM posts WHERE replyTo = " . $num . " ORDER BY ID DESC LIMIT 3) ORDER BY ID ASC;";
             $resReplies = mysqli_query($con, $sqlReplies);
             while($rowReplies = mysqli_fetch_assoc( $resReplies )) {
+
+                printPost($con, $isMod, $rowReplies);
+                /*
                 //prepare variables
                 $rowImage = "/thumbnails/" . htmlspecialchars($rowReplies['image']);
                 $imageID = 'img' . $rowReplies['ID'];
@@ -131,6 +134,7 @@ $con = connect_to_database();
                     echo nl2br("</span>");
                 }
                 echo '</p></form></div><br>';
+                */
             }
 
 

@@ -83,21 +83,19 @@ if($_POST['report']) {
 
         //you must wait 2 minutes before posting a new thread
         if($_GET['message'])
-            echo '<script> alert("You must wait longer before making a new post."); </script>';
+            echo '<script> alert("You must wait two minutes before starting a new thread."); </script>';
     ?>
 
     <?php boardList($con, $boardName); ?>
 
-
     <br>
-        <!--BANNER-->
-        <?php banner(); ?>
-        <br>
-        <p id="boardName"><strong><?php echo ucfirst($boardName); ?></strong></p>
-        <?php echo $top_message; ?>
-
-    <br>
-
+    <div id="boardName">
+    <!--BANNER-->
+    <?php banner(); ?>
+    <p style="font-size:30px"><strong><?php echo ucfirst($boardName); ?></strong></p>
+    <?php echo $top_message; ?>
+    </div>
+    <br><br>
 
     <!--POST THREAD BUTTON-->
     <button id="showForm" style="text-align:center; height:30px;" onclick="showForm()">Start a New Thread</button>
@@ -151,7 +149,7 @@ if($_POST['report']) {
 <!--post preview-->
 <div class="post" id="preview" style="display:none"></div>
 
-<?php echo '<p>[<a href="/catalog.php?board=' . $boardName . '">Catalog</a>]</p>'; ?>
+<?php echo '<p>[<a href="boards/' . $boardName . '/">Thread List</a>]</p>'; ?>
 <hr>
 
 <?php
@@ -159,47 +157,37 @@ if($_POST['report']) {
 $selectSQL = "SELECT * FROM posts ORDER BY bump DESC;";
 $selectRes = mysqli_query($con, $selectSQL);
 $cont = 0;
+echo '<div style="text-align:center">';
 while($row = mysqli_fetch_assoc( $selectRes )) {
     //if counter is less than the maximum allowed threads
     if($cont < 150) {
         if(($row['replyTo'] == 0) && ($row['board'] == $boardName)) {
-            $cont = $cont+1; 
-            if($cont > (($page-1)*15) && $cont <= ($page*15)) { 
 
-            printPost($con, $isMod, $row);
+            echo '<a href="threads/' . $row['ID'] . '"><div class="catalog"><p>';
 
-            // THREAD EXPANSION
-            echo '<p class="info"><a title="Expand thread" id="expandButton'.$row['ID'].'" class="arrow" onclick="expand('.$row['ID'].')">▼</a> ';
+            //show picture if present
+            if($row['image'])
+                echo '<img style="max-width:100%; max-height:150px" src="thumbnails/' . $row['image'] . '"><br>';
 
-            //print number of replies
-            //get number of replies in the thread
-                    $x = "SELECT COUNT(*) AS replies FROM posts WHERE replyTo = " . $row['ID'];
-                    $y = (mysqli_query($con, $x));
-                    $z = mysqli_fetch_assoc($y);
-                    $q = $z['replies'];
-            echo $q . ' replies';
+                //get number of replies in the thread
+                $x = "SELECT COUNT(*) AS replies FROM posts WHERE replyTo = " . $row['ID'];
+                $y = (mysqli_query($con, $x));
+                $z = mysqli_fetch_assoc($y);
+                $q = $z['replies'];
 
-            //print link to thread
-            echo " [<a href=/threads.php?op=".$row['ID'].">Reply</a>]";
+                //get number of images in the thread
+                $x = "SELECT COUNT(*) AS imageReplies FROM posts WHERE replyTo = " . $row['ID'] . " AND image";
+                $y = (mysqli_query($con, $x));
+                $z = mysqli_fetch_assoc($y);
+                $r = $z['imageReplies'];
 
-            echo '</p>';
-                
+                echo '<span title="(R)eplies / (I)mage replies">R: <strong>' . $q . '</strong> / I: <strong>' . $r . '</strong></span>';
 
-            //#################################################################################################################
-
-
-            //PRINT LAST REPLIES
-            echo '<div id="replies'.$row['ID'].'">';
-            $sqlReplies = "(SELECT * FROM posts WHERE replyTo = " . $row['ID'] . " ORDER BY ID DESC LIMIT 3) ORDER BY ID ASC;";
-            $resReplies = mysqli_query($con, $sqlReplies);
-            while($rowReplies = mysqli_fetch_assoc( $resReplies )) {
-
-                printPost($con, $isMod, $rowReplies);
-
-            }
-            echo '</div>';
-            echo '<hr>';
-        }
+                echo '<br>';
+                echo '<strong><span class="subject">' . htmlspecialchars($row['subject']) . '</span></strong> ';
+                echo htmlspecialchars($row['commento']);
+            
+            echo '</p></div></a>';
         }
     }
     else if (($row['replyTo']) == 0 && ($row['board'] == $boardName)) {
@@ -209,32 +197,10 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
         mysqli_query($con, $deleteSQL);  
 
         //delete old images
-        unlink('uploads/' . $row['image']);
-
-        //delete old thumbnails
-        unlink('thumbnails/' . $row['image']); 
+        unlink('uploads/' . $row['image']); 
     }
 }
-
-//count total threads
-$sql = "SELECT * FROM posts WHERE board = '{$boardName}' AND bump;";
-$res = mysqli_query($con, $sql);
-$threads = 0;
-while($row = mysqli_fetch_assoc($res)) {
-    $threads++;
-}
-//print links to pages
-$pages = ceil($threads / 15);
-
-echo '<p style="text-align:center">';
-
-for($i = 1; $i <= $pages; $i++) {
-    //$link = 'boards/' . $boardName . '/' . $i;
-    $link = $_SERVER['PHP_SELF'] . '?board=' . $boardName . '&page=' . $i;
-    echo '<a href="' . $link . '"><button class="pageButton">' . $i . '</button></a> ';
-}
-
-echo '</p><br>';
+echo '</div';
 
 ?>
 </body>
