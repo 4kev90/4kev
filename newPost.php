@@ -17,7 +17,10 @@ if($_GET['board']) {
         if($boardName == $row['boardName'])
             $boardExists = true;
     if(!$boardExists)
+    {
         header('Location: http://4kev.org');
+        die();
+    }
   
     //get page
     if($_GET['page'])
