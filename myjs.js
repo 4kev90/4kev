@@ -92,6 +92,13 @@ function resizepic(id) {
     }
 }
 
+function resizeUrl(id) {
+    if(document.getElementById(id).className == "smallUrl") 
+        document.getElementById(id).className = "bigUrl";
+    else
+        document.getElementById(id).className = "smallUrl";
+}
+
 function showRules() {
     document.getElementById('rules').style.display = 'block';
 }
@@ -143,6 +150,13 @@ function formAction(ID) {
 
 $(document).ready(function(){
 
+    $(".redArrow").click(function(event){
+        if($(this).html() == "▶")
+            $(this).html("▼");
+        else
+            $(this).html("▶");
+    });
+
     $(".smallpic").hover(function(event){
         var idx = "#" + this.id;
         $(idx).toggleClass("smallpic largepic");
@@ -154,6 +168,7 @@ $(document).ready(function(){
         else
             $(this).html("embed");
     });
+
     $(document).on('click', '.quickReply', function(event){
         var x = event.clientX + 10;
         var y = event.clientY;
@@ -163,6 +178,15 @@ $(document).ready(function(){
         $("#linky").val(str1);
         $(".replyWindow").css("display", "inline-block");
     });
+
+    $(document).on('click', '.redArrow', function(event) {
+        var x = event.clientX + 10;
+        var y = event.clientY;
+        $("#dropDown").css("left", x);
+        $("#dropDown").css("top", y);
+        $("#dropDown").css("display", "inline-block");
+    });
+
 
     $(".quickReply2").click(function(event){
         $(this).html() = "test";

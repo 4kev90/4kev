@@ -76,6 +76,8 @@ if($_POST['report']) {
 
 <div class="bgImage">
 
+    <?php searchForm($con); ?>
+
     <?php //print a message if a post has been reported
         if($_POST['report'])
             echo "<script> alert('Reported'); </script>";
@@ -115,6 +117,7 @@ if($_POST['report']) {
                     echo '<textarea placeholder="Name" rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
             ?>
             <textarea placeholder="Options" style="width:300px;" rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+            <!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
             <input style="width:300px;" type="file" name="fileToUpload" id="fileToUpload"><br>
             <textarea placeholder="Comment" style="width:300px; resize:both;" rows="4" cols="40" input type="text" name="comment" /></textarea><br>
             <button style="text-align:center; height:30px; width:300px" type="submit" value="Post" name="myButton">Post</button>
@@ -138,6 +141,7 @@ if($_POST['report']) {
         echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
 ?>
 <textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+<!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
 <input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><br>
 <textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea><br>
 <button style="text-align:center; height:30px; width:300px" type="submit" name="myButton">Post</button>
@@ -169,7 +173,7 @@ while( $row = mysqli_fetch_assoc( $selectRes ) ){
 
 ?>
 <br>
+<!--redirect to bottom of page after reply-->
+<div id="pageBottom"></div>
 </body>
 </html>
-
-

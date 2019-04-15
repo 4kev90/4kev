@@ -1,7 +1,6 @@
 <?php
 
-$top_message ="<p><a target='_blank' href='https://www.youtube.com/channel/UCro01uaJve6mGAag5aSfOeg/live'>>> Official Radio <<</a></p>";
-$top_message = '';
+$top_message = '<p><strong>FUCK WITH THE BEST DIE LIKE THE REST</strong></p>';
 
 function printHead() {
 
@@ -14,6 +13,7 @@ function printHead() {
     else if($_COOKIE["style"])
         $style = $_COOKIE["style"];
 
+    echo '<link rel="stylesheet" type="text/css" href="/themes/base.css?v=' . time() . '">';
 
     echo '<link rel="stylesheet" type="text/css" href="/themes/' . $style . '.css?v=' . time() . '">';
 
@@ -29,9 +29,13 @@ function printPost($con, $isMod, $rowReplies) {
     //prepare variables
                 $rowImage = "/thumbnails/" . htmlspecialchars($rowReplies['image']);
                 $imageID = 'img' . $rowReplies['ID'];
+                $urlID = 'url' . $rowReplies['ID'];
                 $rowName = htmlspecialchars($rowReplies['name']);
                 $rowComment = htmlspecialchars($rowReplies['commento']);
                 $rowSubject = htmlspecialchars($rowReplies['subject']);
+                $rowImageUrl = htmlspecialchars(addslashes($rowReplies['imageUrl']));  //protection against xss attack
+                $rowImageUrl = str_replace(" ","", $rowImageUrl);  //protection against xss attack
+                $rowImageUrl = str_replace("onerror","whatnow", $rowImageUrl);  //protection against xss attack
                 $rowFileName = htmlspecialchars($rowReplies['fileName']);
                 $id = $rowReplies['ID'];
 
@@ -40,12 +44,25 @@ function printPost($con, $isMod, $rowReplies) {
                 if($rowReplies['image']) 
                     echo '<img class="santahat" src="/santahat.png">';
                 */
-
+                /*
+                //valentines day
+                if($rowReplies['image']) 
+                    echo '<img class="santahat" src="/hearts.png">';
+                */
+                /*
+                //halloween
+                if($rowReplies['image']) 
+                    echo '<img class="santahat" src="/pumpkin.png">';
+                */
                 //display posts
                 if($rowReplies['replyTo'])
                     echo '<div class="post" id="'.$id.'">';
                 else 
                     echo '<div class="post op" id="'.$id.'">';
+
+                //show picture if present (URL)
+                if($rowReplies['imageUrl'])
+                    echo "<img style='float:left;' class='smallUrl' id=$urlID src=$rowImageUrl onclick='resizeUrl(this.id)'>";
 
                 //show picture if present
                 if($rowReplies['image']) {
@@ -56,7 +73,7 @@ function printPost($con, $isMod, $rowReplies) {
                     else if (strpos($rowReplies['image'], 'pdf')) 
                         echo '<a target="_blank" href="/uploads/'.$rowReplies['image'].'"><img style="height:150px; width:auto;" src="/pdflogo.png"></a>';
                     else 
-                        echo "<img style='float:left;' class='thumbnail' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
+                        echo "<img style='float:left;' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
                 }
 
                 //PRINT POST INFO
@@ -79,8 +96,20 @@ function printPost($con, $isMod, $rowReplies) {
 
                 if(!$rowReplies['name'])
                     echo("Anonymous");
-
+/*
+                if($rowReplies['loggedIn'] == 1) 
+                    echo $rowName;
+                else
                     echo nl2br("$rowName");
+*/
+
+                if($rowReplies['loggedIn'] == 1) {
+                        echo $rowName;
+                }
+                else {
+                    $rowName = wordFilter($rowName);
+                    echo nl2br("$rowName");
+                }
 
                 echo "</strong></span>";
 
@@ -92,17 +121,28 @@ function printPost($con, $isMod, $rowReplies) {
                     echo " <a class='quickReply' onclick='formAction(".$rowReplies['replyTo'].")'>{$rowReplies['ID']}</a>";
                 else
                     echo " <a class='quickReply' onclick='formAction(".$rowReplies['ID'].")'>{$rowReplies['ID']}</a>";
-
+/*
+                //thumbs up/downs
+                echo '<a target="_blank" href="https://www.youtube.com/watch?v=68ugkg9RePc" title="Like" style="color:#004899;"> ▲ </a>';
+                echo '<a target="_blank" href="https://www.youtube.com/watch?v=y6120QOlsfU" title="Dislike" style="color:red;">▼ </a>';
+*/
+                //print sticky logo
+                if($rowReplies['sticky'])
+                    echo " <img title='Sticky' src='/sticky.gif'>";
+/*
                 //print blue arrow
                 $hiddenButton = (string)$rowReplies['ID'] . 'btn';
                 echo " <a class='arrow' onclick='showButton(\"$hiddenButton\")'>▶</a>";
+
+                //print red arrow
+                echo " <a class='redArrow'>▶</a>";
 
                 //show delete button if user is a mod, else show report button
                 if($isMod)
                     echo " <button id='$hiddenButton' style='display:none;' type='submit' name='delete' value='{$rowReplies['ID']}'>Delete</button>";
                 else
                     echo " <button id='$hiddenButton' style='display:none;' type='submit' name='report' value='{$rowReplies['ID']}'>Report</button>";
-
+*/
 
                 //links to post replies
                 echo '<span class="linksToReplies">';
@@ -122,6 +162,10 @@ function printPost($con, $isMod, $rowReplies) {
                         echo   "<A style='text-decoration: underline;' onmouseover='preview(event, ".$ltrrow['ID'].")' onmouseout='hidePostPreview()' class='postlink'>>>".$ltrrow['ID']."</A> ";
                 }
                 echo '</span>';
+
+                //print url info
+                if($rowReplies['imageUrl']) 
+                    echo '<br>Url: <a target="_blank" href="' . $rowImageUrl . '">' . $rowImageUrl . '</a>';
 
                 //print image info
                 if($rowReplies['image']) {
@@ -154,7 +198,12 @@ function printPost($con, $isMod, $rowReplies) {
                     echo "<br><br>";
                 }
 
+                echo '</p>';
+
                 //PRINT COMMENT
+
+                echo "<p style='padding-left:10px; padding-right:10px;'>";
+
                 //divide comment into lines
                 $lines = explode("\n", $rowComment);
          
@@ -187,6 +236,7 @@ function printPost($con, $isMod, $rowReplies) {
                     }
                     echo nl2br("</span>");
                 }
+
                 echo '</p></form></div><br>';
 }
 
@@ -247,7 +297,7 @@ function fortune($num) {
 }
 
 function banner() {
-    $banner = "<a href = 'http://4kev.org/'><img style='height:100px; width:300px;' class='banner' src = '/banners/" . rand(0, 70) . ".gif' /></a>";
+    $banner = "<a href = 'https://4kev.org/'><img style='height:100px; width:300px;' class='banner' src = '/banners/" . rand(0, 82) . ".gif' /></a>";
     echo $banner;
 }
 
@@ -307,6 +357,7 @@ function checkYoutube($word) {
 }
 
 function wordFilter($word) {
+    /*
     if(strpos(strtolower($word), 'fuck') !== false)
         $word = str_replace("fuck","FUARK",strtolower($word));
     if(strpos(strtolower($word), 'shit') !== false)
@@ -315,15 +366,19 @@ function wordFilter($word) {
         $word = str_replace("nigger","brony",strtolower($word));
     if(strpos(strtolower($word), 'faggot') !== false)
         $word = str_replace("faggot","juggalo",strtolower($word));
+    */
     if(strpos(strtolower($word), '[spoiler]') !== false)
         $word = str_replace("[spoiler]","<span class='spoiler'>",strtolower($word));
     if(strpos(strtolower($word), '[/spoiler]') !== false)
         $word = str_replace("[/spoiler]","</span>",strtolower($word));
+    if(strpos(strtolower($word), 'trap') !== false)
+        $word = str_replace("trap","fag",strtolower($word));
+    /*
     if(strpos(strtolower($word), '[code]') !== false)
         $word = str_replace("[code]","<pre class='code'>",strtolower($word));
     if(strpos(strtolower($word), '[/code]') !== false)
         $word = str_replace("[/code]","</pre>",strtolower($word));
- 
+    */
     return $word;
 }
 
@@ -381,6 +436,18 @@ function onlineUsers($con) {
     return $onlineUsers;
 }
 
+function searchForm($con) {
+    echo "
+    <div id='searchForm'>
+        <form action='/search.php' method='post'>
+            <input type='text' name='search' placeholder='Search'><br>
+            <button type='submit' style='display:none'></button>
+        </form>
+    </div>
+    ";
+    
+}
+
 function loginForm($con, $query) {
     if(!isset($_SESSION['ID']))
         echo '
@@ -414,7 +481,7 @@ echo '<div id="boardlist_background"></div>';
 echo '<div id="boardlist">';
 
 //BOARDS
-$boardList = array('random', 'anime', 'cyberpunk', 'design', 'development', 'feels', 'music', 'paranormal', 'requests', 'retro', 'technology', 'videogames', 'meta');
+$boardList = array('random', 'anime', 'cyberpunk', 'design', 'development', 'feels', 'music', 'technology', 'meta');
 foreach($boardList as $boardName)
     echo '<a href="/boards/' . $boardName . '/"><p class="boards">&nbsp;' . ucfirst($boardName) . '</p></a>';
     echo '<a href="/index.php"><p class="boards">&nbsp;Home</p></a>';
@@ -439,7 +506,8 @@ function footer($con) {
          | <a onclick="showRules()">Rules</a>
          | <a href="https://github.com/federicoolivo/4kev">GitHub</a>
          | <a href="?style=cyber">Cyber</a>
-         | <a href="?style=yotsuba">Yotsuba</a>
+         | <a href="?style=windows95">Windows95</a>
+         | <a href="?style=stalenhag">Stålenhag</a>
          | 4kev@protonmail.com
         </p>';
 
@@ -470,5 +538,19 @@ function my_hash_equals($str1, $str2) {
       return !$ret;
     }
 }
+
+
+function foo($n) {
+    if($n==0) 
+        return 3;
+    else
+        return 1 + foo($n - 1);
+}
+
+
+
+
+
+
 
 ?>

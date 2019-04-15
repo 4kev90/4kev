@@ -75,6 +75,8 @@ if($_POST['report']) {
 
 <div class="bgImage">
 
+    <?php searchForm($con); ?>
+
     <?php
 
         //print a message if a post has been reported
@@ -164,6 +166,13 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
         if(($row['replyTo'] == 0) && ($row['board'] == $boardName)) {
 
             echo '<a href="threads/' . $row['ID'] . '"><div class="catalog"><p>';
+
+            //show picture if present (URL)
+            $rowImageUrl = htmlspecialchars(addslashes($row['imageUrl']));  //protection against xss attack
+            $rowImageUrl = str_replace(" ","", $rowImageUrl);  //protection against xss attack
+            $rowImageUrl = str_replace("onerror","whatnow", $rowImageUrl);  //protection against xss attack
+            if($row['imageUrl'])
+                echo "<img style='max-width:100%; max-height:150px' src=$rowImageUrl>";
 
             //show picture if present
             if($row['image'])

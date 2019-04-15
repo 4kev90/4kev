@@ -75,6 +75,8 @@ if($_POST['report']) {
 
 <div class="bgImage">
 
+    <?php searchForm($con); ?>
+
     <?php
 
         //print a message if a post has been reported
@@ -116,8 +118,9 @@ if($_POST['report']) {
             else
                 echo '<textarea style="width:300px;" placeholder="name" rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
             ?>
-            <textarea style="width:300px;" placeholder="Options" rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
-            <textarea style="width:300px;" placeholder="Subject" rows="1" cols="30" input type="text" name="subject" /></textarea><br>
+            <textarea style="width:300px;" placeholder="Options"    rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+            <textarea style="width:300px;" placeholder="Subject"    rows="1" cols="30" input type="text" name="subject" /></textarea><br>
+            <!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
             <input style="width:300px;" type="file" name="fileToUpload" id="fileToUpload"><br>
             <textarea placeholder="Comment" style="resize:both; width:300px;" rows="4" cols="40" input type="text" name="comment" /></textarea><br>
             <button style="text-align:center; height:30px; width:300px" type="submit" value="Post" name="myButton">Post</button>
@@ -143,6 +146,7 @@ if($_POST['report']) {
         echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
 ?>
 <textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
+<!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
 <input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><br>
 <textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea><br>
 <button style="text-align:center; height:30px; width:300px" type="submit" name="myButton">Post</button>
@@ -151,12 +155,22 @@ if($_POST['report']) {
 <!--post preview-->
 <div class="post" id="preview" style="display:none"></div>
 
+<div id="dropDown" style="display:none">test</div>
+
 <?php echo '<p>[<a href="/catalog.php?board=' . $boardName . '">Catalog</a>]</p>'; ?>
 <hr>
 
+
 <?php
 
-$selectSQL = "SELECT * FROM posts ORDER BY bump DESC;";
+//####################   PRINT POSTS   #######################
+
+
+
+$selectSQL = "SELECT * FROM posts ORDER BY sticky DESC, bump DESC;";
+                                  
+
+
 $selectRes = mysqli_query($con, $selectSQL);
 $cont = 0;
 while($row = mysqli_fetch_assoc( $selectRes )) {

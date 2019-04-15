@@ -17,7 +17,9 @@ $con = connect_to_database();
 
 <div class="bgImage">
 
-<?php boardList($con); ?>
+	<?php searchForm($con); ?>
+
+	<?php boardList($con); ?>
 
 <br>
     <!--BANNER-->
@@ -116,7 +118,7 @@ foreach($boards as $board) {
 	$y = (mysqli_query($con, $x));
 	$z = mysqli_fetch_assoc($y);
 	$q = $z['boardPosts'];
-	for($i = 0; $i < ($q / 20); $i++)
+	for($i = 0; $i < ($q / 30); $i++)
 		echo '▀';
 	echo ' ';
 	echo $q;
@@ -136,7 +138,7 @@ $sql = "SELECT * FROM activeHours";
 $res = mysqli_query($con, $sql);
 while($row = mysqli_fetch_assoc($res)) {
 	echo $row['hour'] . " ";
-	for($i = 0; $i < $row['visits']; $i+=10)
+	for($i = 0; $i < $row['visits']; $i+=200)
 		echo '▀';
 	echo '<br>';
 	

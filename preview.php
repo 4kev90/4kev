@@ -10,8 +10,34 @@ $con = connect_to_database();
 
 if($_GET['num'])
 	$num = $_GET['num'];
-
+/*
+if($_GET['num']) {
+    $num = $_GET['num'];
+    $sql = $con->prepare("SELECT * FROM posts WHERE ID = ?");
+    $sql->bind_param('i', $num);
+    if($sql->execute()) {
+        $result = $sql->get_result();
+        while ($row = $result->fetch_assoc()) {
+            if(!$row['replyTo'])
+                $threadExists = 1;
+        }
+        if($threadExists != 1) {
+            header('Location: http://4kev.org');
+            die();
+        }
+    }
+  
+    //get name of the board
+    $aa = "SELECT * FROM posts WHERE ID = $op";
+    $bb = (mysqli_query($con, $aa) );
+        while($row = mysqli_fetch_assoc( $bb ))
+            $boardName = $row['board'];
+}
+*/
 $sql = 'SELECT * FROM posts WHERE ID = ' . $num;
+
+
+
 $res = mysqli_query($con, $sql);
 while($row = mysqli_fetch_assoc($res)) {
 

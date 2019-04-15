@@ -70,11 +70,44 @@ while($row = mysqli_fetch_assoc($res)) {
 
 <body>
 
-
-
 <?php loginForm($con); ?>
 
 <div class="bgImage">
+<!--
+    <div class="snowflakes" aria-hidden="true">
+      <div class="snowflake">
+      ❄
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+    </div>
+-->
+    <?php searchForm($con); ?>
 
     <?php boardList($con); ?>
 
@@ -125,9 +158,15 @@ while($row = mysqli_fetch_assoc($res)) {
         <br><hr>
 </div>
 
+<!--
+<div style="display:inline-block; float:left; width:10%; text-align:center;">
+    <a target="_blank" href="https://ceil-m.tumblr.com/"><img src="http://www.4kev.org/uploads/12014.png"></a>
+</div>
+-->
+
 <div style="display:inline-block; float:left; width:75%">
     
-    <div class="post" style="float:right; width:93%; margin-right: 10px;">
+    <div class="lastPosts" style="float:right; width:93%; margin-right: 10px;">
 
         <?php
             //display last posts
@@ -135,7 +174,7 @@ while($row = mysqli_fetch_assoc($res)) {
             $res = mysqli_query($con, $sql);
             echo "<strong><p style='text-align:center'>LAST POSTS</p></strong>";
             $cont = 0;
-            while(($cont < 50) && $row = mysqli_fetch_assoc( $res )) {
+            while(($cont < 70) && $row = mysqli_fetch_assoc( $res )) {
                 if($row['board'] != "test" && $row['board'] != "traps" && $row['commento']) {
 
                     //stampa link to thread
@@ -143,7 +182,7 @@ while($row = mysqli_fetch_assoc($res)) {
                         $num = $row['replyTo'];
                     else
                         $num = $row['ID'];
-                    $threadlink = "http://4kev.org/threads/" . $num . "#" . $row['ID'];
+                    $threadlink = "https://4kev.org/threads/" . $num . "#" . $row['ID'];
 
                     //stampa board
                     echo "<p><a href='$threadlink'><strong>No.{$row['ID']} {$row['board']}</strong><br></a>";
@@ -176,28 +215,36 @@ while($row = mysqli_fetch_assoc($res)) {
             $res = mysqli_query($con, $sql);
             echo "<strong><p style='text-align:center'>LAST IMAGES</p></strong>";
             $cont = 0;
-            while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
-                if($row['board'] != "test" && $row['board'] != "traps" && $row['image']) {
+            while(($cont < 15) && $row = mysqli_fetch_assoc( $res )) {
+                if($row['board'] != "test" && ($row['image'] || $row['imageUrl'])) {
 
                     //link to thread
                     if($row['replyTo'])
                         $num = $row['replyTo'];
                     else
                         $num = $row['ID'];
-                    $threadlink = "http://4kev.org/threads/" . $num  . "#" . $row['ID'];
+                    $threadlink = "https://4kev.org/threads/" . $num  . "#" . $row['ID'];
 
                     //board
                     echo "<p style='text-align:center'><strong>No.{$row['ID']} {$row['board']}<br></strong></p>";
 
                     //picture
-                    $pic = $row['image'];
-                    if (strpos(strtolower($pic), 'pdf'))
-                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='pdflogo.png'></a></p>";
-                    else if (!strpos($pic, 'webm') && !strpos($pic, 'mp3')) 
-                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='thumbnails/$pic'></a></p>";
-                    else
-                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='video.png'></a></p>";
-                    $cont++;
+                    if($row['image']) {
+                        $pic = $row['image'];
+                        if (strpos(strtolower($pic), 'pdf'))
+                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='pdflogo.png'></a></p>";
+                        else if (!strpos($pic, 'webm') && !strpos($pic, 'mp3')) 
+                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='thumbnails/$pic'></a></p>";
+                        else
+                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='video.png'></a></p>";
+                        $cont++;
+                    }
+                    //url
+                    if($row['imageUrl']) {
+                        $url = $row['imageUrl'];
+                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='" . $row['imageUrl'] . "'></a></p>";
+                        $cont++;
+                    }
                 }
             }
         ?>
@@ -216,7 +263,7 @@ while($row = mysqli_fetch_assoc($res)) {
             1) be polite to other users<br>
             2) do not spam or flood the website<br>
             3) do not post pornography or disturbing content<br>
-            4) critics about the website must be constructive<br>
+            4) do not post degenerate content<br>
         </p>
     </div>
     <hr>

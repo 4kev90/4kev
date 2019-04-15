@@ -16,12 +16,11 @@ if($_GET['board']) {
     while($row = mysqli_fetch_assoc($res))
         if($boardName == $row['boardName'])
             $boardExists = true;
-    if(!$boardExists)
-    {
+    if(!$boardExists) {
         header('Location: http://4kev.org');
         die();
     }
-  
+    
     //get page
     if($_GET['page'])
         $page = $_GET['page'];
@@ -38,8 +37,10 @@ else if($_GET['op']) {
             if(!$row['replyTo'])
                 $threadExists = 1;
         }
-        if($threadExists != 1)
+        if($threadExists != 1) {
             header('Location: http://4kev.org');
+            die();
+        }
     }
   
     //get name of the board
@@ -81,6 +82,7 @@ $comm = mysqli_real_escape_string($con, $_POST['comment']);
 date_default_timezone_set('Europe/Paris');
 $date = date('d/m/Y H:i:s', time());
 $ipAddr = $_SERVER['REMOTE_ADDR'];
+$url = mysqli_real_escape_string($con, $_POST['url']);
 $image = basename($_FILES["fileToUpload"]["name"]);
 if($options == 'fortune')
     $fortune = rand(0,12);
@@ -176,7 +178,7 @@ if($op) {
 }
 
 //insert data into table
-if(($comm || $image) && $bumpLimitOk) {
+if(($comm || $image || $url) && $bumpLimitOk) {
 
 //variables concerning image upload
     $selectSQL = "SELECT ID FROM posts ORDER BY ID DESC LIMIT 1;";
@@ -192,6 +194,10 @@ if(($comm || $image) && $bumpLimitOk) {
     $target_dir = "uploads/";
     $target_file = $target_dir . $newName;
     $uploadOk = 1;
+
+    // VIP BOARD - only logged in users are allowed to post
+    if($boardName == 'vip' && !$loggedIn)
+        $uploadOk = 0;
 
     if($oldName) {
         // pdf
@@ -311,12 +317,18 @@ if(($comm || $image) && $bumpLimitOk) {
         }
     }
 
+    //posts must be at least x characters long (if they don't contain an image)
+    if(strlen($comm) < 20 && !$image) {
+        echo "Posts must be at least 20 characters long";
+        $uploadOk = 0;
+    }
+
     if($uploadOk == 1 && !$op) {
-        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";
+        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, imageUrl, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$url', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";
         mysqli_query($con, $sql);  
     }
     if($uploadOk == 1 && $op) {
-        $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";
+        $sql = "INSERT INTO posts (name, options, commento, dateTime, replyTo, ipAddress, board, imageUrl, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$comm', '$date', $op, '$ipAddr', '$boardName', '$url', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";
         mysqli_query($con, $sql);
 
         //bump thread
@@ -330,6 +342,12 @@ if(($comm || $image) && $bumpLimitOk) {
         }
     }
     
+//if post is a reply, redirect to bottom of page
+if($op) {
+    header('Location: ' . $_SERVER['HTTP_REFERER'] . '#pageBottom');
+    die;
+}
+
     
 //redirect to same page
 header('Location: ' . $_SERVER['HTTP_REFERER']);
