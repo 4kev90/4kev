@@ -10,10 +10,11 @@ p {
 html, body {
 	background-color: #00161d;
 	color: #95bab1;
-	background-image: url("https://a.doko.moe/eruufu.jpg");
-	background-repeat: repeat-y !important;
+	background-image: url("images/stalenhag_background.jpg");
+	/*background-repeat: repeat-y !important;
 	background-position-y: top;
-	background-position-x: center;
+	background-position-x: center;*/
+        background-size: cover;
 	background-attachment: fixed;
 }
 
@@ -117,8 +118,6 @@ hr {
 }
 
 * {
-	font-family: "scientifica", "xos4-terminus", "terminus", "monospace" !important;
-	font-size: 9 !important;
-	/* How 2 write bad code: Do this */
+	font-family: "Iosevka", "Ubuntu Mono", "monospace", "arial" !important;
+	/*font-size: 9 !important;*/
 }
-/* The Scientifica font can be found at: https://github.com/NerdyPepper/scientifica */
