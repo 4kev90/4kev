@@ -102,6 +102,11 @@ hr {
 	color: #95bab1;
 }
 
+#preview {
+        background: rgba(0, 22, 29, 1) !important;
+	color: #95bab1;
+}
+
 .lastPosts {
 	background: rgba(0, 22, 29, 0.5);
 	color: #95bab1;
