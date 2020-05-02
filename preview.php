@@ -130,6 +130,11 @@ while($row = mysqli_fetch_assoc($res)) {
                 fortune($row['fortune']);
                 echo "<br><br>";
             }
+	
+	if($row['kanji']) {
+                fortune($row['kanji']);
+                echo "<br><br>";
+            }
 
 	        //PRINT COMMENT
 	        //divide comment into lines
