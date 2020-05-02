@@ -86,6 +86,9 @@ $url = mysqli_real_escape_string($con, $_POST['url']);
 $image = basename($_FILES["fileToUpload"]["name"]);
 if($options == 'fortune')
     $fortune = rand(0,12);
+
+if($options == 'kanji')
+    $kanji = rand(0,4);
   
 
 //you must wait 2 minutes before starting a new thread
@@ -324,7 +327,7 @@ if(($comm || $image || $url) && $bumpLimitOk) {
     }
 
     if($uploadOk == 1 && !$op) {
-        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, imageUrl, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$url', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";
+        $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, imageUrl, image, fileName, loggedIn, isMod, fortune, kanji) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$url', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune', '$kanji')";
         mysqli_query($con, $sql);  
     }
     if($uploadOk == 1 && $op) {
