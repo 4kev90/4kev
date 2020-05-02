@@ -197,6 +197,11 @@ function printPost($con, $isMod, $rowReplies) {
                     fortune($rowReplies['fortune']);
                     echo "<br><br>";
                 }
+    
+    if ($rowReplies['kanji']) {
+                 kanji($rowReplies['kanji']);
+                    echo "<br><br>";
+                }
 
                 echo '</p>';
 
@@ -252,48 +257,18 @@ function compareDates($older, $newer) {
 }
 
 function fortune($num) {
+ $fortunes = array("Reply hazy, try again", "Excellent Luck", "Good Luck", "Average Luck", "Bad Luck", "Good news will come to you by mail", " （　´_ゝ`）ﾌｰﾝ ", " ｷﾀ━━━━━━(ﾟ∀ﾟ)━━━━━━&#160;!!!!",
+                     "You will meet a dark handsome stranger",  "Better not tell you now", "Outlook good", "Very Bad Luck", "Godly Luck");
+   $fortuneColors = array("#F51C6A", "#FD4D32", "#E7890C", "#BAC200", "#7FEC11", "#43FD3B", "#16F174", "#00CBB0", "#0893E1", "#2A56FB",
+                         "#6023F8", "#9D05DA", "#D302A7");
+    echo '<span style=color:' . $fortuneColors[$num] . '><b>Your fortune: ' . $fortunes[$num] . '</b></span>';
 
-    switch ($num) {
-        case 0:
-            echo '<span style="color:#F51C6A"><b>Your fortune: Reply hazy, try again</b></span>';
-            break;
-        case 1:
-            echo '<span style="color:#FD4D32"><b>Your fortune: Excellent Luck</b></span>';
-            break;
-        case 2:
-            echo '<span style="color:#E7890C"><b>Your fortune: Good Luck</b></span>';
-            break;
-        case 3:
-            echo '<span style="color:#BAC200"><b>Your fortune: Average Luck</b></span>';
-            break;
-        case 4:
-            echo '<span style="color:#7FEC11"><b>Your fortune: Bad Luck</b></span>';
-            break;
-        case 5:
-            echo '<span style="color:#43FD3B"><b>Your fortune: Good news will come to you by mail</b></span>';
-            break;
-        case 6:
-            echo '<span style="color:#16F174"><b>Your fortune: （　´_ゝ`）ﾌｰﾝ </b></span>';
-            break;
-        case 7:
-            echo '<span style="color:#00CBB0"><b>Your fortune: ｷﾀ━━━━━━(ﾟ∀ﾟ)━━━━━━&#160;!!!!</b></span>';
-            break;
-        case 8:
-            echo '<span style="color:#0893E1"><b>Your fortune: You will meet a dark handsome stranger</b></span>';
-            break;
-        case 9:
-            echo '<span style="color:#2A56FB"><b>Your fortune: Better not tell you now</b></span>';
-            break;
-        case 10:
-            echo '<span style="color:#6023F8"><b>Your fortune: Outlook good</b></span>';
-            break;
-        case 11:
-            echo '<span style="color:#9D05DA"><b>Your fortune: Very Bad Luck</b></span>';
-            break;
-        case 12:
-            echo '<span style="color:#D302A7"><b>Your fortune: Godly Luck</b></span>';
-            break;
-    }
+}
+
+function kanji($knum) {
+       $sayings = array("猿も木から落ちる", "蓼食う虫も好き好き", "蛙の子は蛙", "覆水盆に返らず");
+       echo '<span><b>' . $sayings[$knum] . '</b></span>';
+    
 }
 
 function banner() {
