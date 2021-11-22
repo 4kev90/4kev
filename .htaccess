@@ -1,0 +1,11 @@
+Options -Indexes
+
+RewriteEngine On
+
+RewriteRule ^boards/(.*)/(.*)$ boards.php?board=$1&page=$2
+
+RewriteRule ^catalog/(.*) catalog.php?board=$1
+
+RewriteRule ^threads/(.*) threads.php?op=$1
+
+RewriteRule ^statistics$ statistics.php

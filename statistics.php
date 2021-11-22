@@ -15,17 +15,16 @@ $con = connect_to_database();
 </head>
 <body>
 
+<?php 
+	//topBar($con); 
+?>
+
+<?php boardList($con); ?>
+
 <div class="bgImage">
 
-	<?php searchForm($con); ?>
-
-	<?php boardList($con); ?>
-
-<br>
-    <!--BANNER-->
-    <?php banner(); ?>
-    <br>
     <p id="boardName"><strong>Statistics</strong></p>
+    
     <?php echo $top_message; ?>
 
 <br>

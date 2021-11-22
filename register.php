@@ -14,29 +14,36 @@ $pwd2 = mysqli_real_escape_string($con, $_POST['pwd2']);
 $cle = makePwd();
 $msg = 'http://4kev.org/activation.php?cle='.urlencode($cle);
 
+header("Location: https://www.4kev.org/");
+
 //check if password and confirm password fields correspond
 if($pwd != $pwd2) {
-    header("Location: index.php?err=5");
+    header("Location: /index.php?err=5");
     die;
 }
 
 //check if password is too short
 if(strlen($pwd) < 8) {
-    header("Location: index.php?err=6");
+    header("Location: /index.php?err=6");
     die;
 }
 
+// CHECK IF JAVASCRIPT IS ENABLED
+if($_POST['JS_enabled'] != "enabled") {
+    header("Location: /index.php?err=7");
+    die;
+}
 
 //check if name or email is already taken
 $aa = "SELECT * FROM users";
 $bb = (mysqli_query($con, $aa) );
 while($row = mysqli_fetch_assoc( $bb )) {
-    if($name == $row['name']) {
-        header("Location: index.php?err=2");
+    if($name == $row['name'] && $row['confirmed']) {
+        header("Location: /index.php?err=2");
         die;
     }
-    if($email == $row['email']) {
-        header("Location: index.php?err=3");
+    if($email == $row['email'] && $row['confirmed']) {
+        header("Location: /index.php?err=3");
         die;
     }
 }
@@ -49,7 +56,7 @@ if($name && $email && $pwd) {
     // send email
     mail($email,"4kev.org registration",$msg);
 
-    header("Location: index.php?err=1");
+    header("Location: /index.php?err=1");
     die;
 }
 

@@ -21,22 +21,18 @@ $search = mysqli_real_escape_string($con, $_POST['search']);
 <title>Search</title>
 <?php printHead(); ?>
 </head>
-
-<?php loginForm($con, $op); ?>
+<body>
 
 <div class="bgImage">
 
-    <?php searchForm($con); ?>
 
-    <?php boardList($con, $op); ?>
-
-    <br>
-        <!--BANNER-->
-        <?php banner(); ?>
-        <br>
-        <p id="boardName"><strong><? echo ucfirst($boardName); ?></strong></p>
-        <?php echo $top_message; ?>
-    <br>
+    <?php 
+        boardList($con);
+        echo "<br>";
+        banner();
+        echo "<br>";
+        echo "<p id='boardName'>Search</p>";
+    ?>
 
     <hr>
 </div>
@@ -63,7 +59,7 @@ while( $row = mysqli_fetch_assoc($selectRes)) {
     $threadlink = "http://4kev.org/threads/" . $num . "#" . $row['ID'];
 
     //print board
-    echo "<p><strong>{$row['board']} [<a href='$threadlink'>Go</a>]</strong></p><hr>";
+    echo "<p style='display:inline;'><strong>{$row['board']}</strong></p> <button><a href='$threadlink'>View Thread</a></button><hr>";
 
 }
 

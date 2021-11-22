@@ -79,15 +79,20 @@ else {
 $options = mysqli_real_escape_string($con, $_POST['options']);
 $subj = mysqli_real_escape_string($con, $_POST['subject']);
 $comm = mysqli_real_escape_string($con, $_POST['comment']);
-date_default_timezone_set('Europe/Paris');
+date_default_timezone_set('UTC');
 $date = date('d/m/Y H:i:s', time());
 $ipAddr = $_SERVER['REMOTE_ADDR'];
 $url = mysqli_real_escape_string($con, $_POST['url']);
 $image = basename($_FILES["fileToUpload"]["name"]);
+$uploadOk = 1;
 if($options == 'fortune')
     $fortune = rand(0,12);
-  
 
+/*
+// CHECK IF JAVASCRIPT IS ENABLED
+if($_POST['JS_enabled'] != "enabled")
+    $uploadOk = 0;
+*/
 //you must wait 2 minutes before starting a new thread
 //you must wait 30 seconds before posting a new reply
 if(!$isMod) {
@@ -193,18 +198,37 @@ if(($comm || $image || $url) && $bumpLimitOk) {
         $newName = $imageBaseName . "." . $imageFileType;
     $target_dir = "uploads/";
     $target_file = $target_dir . $newName;
-    $uploadOk = 1;
+    
 
     // VIP BOARD - only logged in users are allowed to post
     if($boardName == 'vip' && !$loggedIn)
         $uploadOk = 0;
-
+    /*
+    // ONLY LOGGED IN USERS ARE ALLOWED TO POST PICTURES
+    if($image && !$loggedIn) {
+        echo "Sorry, to avoid illegal content only logged in users can post pictures";
+        $uploadOk = 0;
+    }
+    */
     if($oldName) {
-        // pdf
-        if(strtolower($imageFileType) == 'pdf') {
+        // set maximum post and file size
+        ini_set('upload_max_filesize', '10M');
+        ini_set('post_max_size', '10M');
+        // apk
+        if(strtolower($imageFileType) == 'apk') {
+            // Check file size
+            if ($_FILES["fileToUpload"]["size"] > 10000000) {
+                echo "Maximum file size: 10MB";
+                $uploadOk = 0;
+            }
+            if($uploadOk)
+                move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file);
+        }
+        // pdf & epub
+        else if(strtolower($imageFileType) == 'pdf' || strtolower($imageFileType) == 'epub') {
             // Check file size
             if ($_FILES["fileToUpload"]["size"] > 100000000) {
-                echo "Maximum pdf size: 100MB";
+                echo "Maximum file size: 100MB";
                 $uploadOk = 0;
             }
             if($uploadOk)
@@ -227,19 +251,19 @@ if(($comm || $image || $url) && $bumpLimitOk) {
                 $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
                 if($check !== false) {
                     echo "File is an image - " . $check["mime"] . ".";
-                    $uploadOk = 1;
+                    //$uploadOk = 1;
                 } else {
                     echo "File is not an image.";
                     $uploadOk = 0;
                 }
             }
             // Check file size
-            if ($_FILES["fileToUpload"]["size"] > 10000000) {
+            if ($_FILES["fileToUpload"]["size"] > 100000000) {
                 echo "Sorry, your file is too large.";
                 $uploadOk = 0;
             }
             // Allow certain file formats
-            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif"  && $imageFileType != "JPG"  && $imageFileType != "PNG"  && $imageFileType != "JPEG"  && $imageFileType != "GIF") {
+            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" && $imageFileType != "JPG"  && $imageFileType != "PNG"  && $imageFileType != "JPEG" && $imageFileType != "GIF") {
                 echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
                 $uploadOk = 0;
             }
@@ -253,15 +277,17 @@ if(($comm || $image || $url) && $bumpLimitOk) {
                     //create thumbnail
 
                     if($imageFileType == "gif" || $imageFileType == "GIF") {
-
+                    	
                         // File and new size
                         $filename = 'uploads/' . $newName;
+                        
 
                         // Content type
                         header('Content-Type: image/gif');
 
                         // Get new sizes
                         list($width, $height) = getimagesize($filename);
+                        
                         if($width > 170 || $height > 170) {
                             if($height >= $width) {
                                 $new_width = $width * 170 / $height;
@@ -272,14 +298,15 @@ if(($comm || $image || $url) && $bumpLimitOk) {
                                 $new_width = 170;
                             }
                         }
-
+                        
                         // Resample
                         $image_p = imagecreatetruecolor($new_width, $new_height);
                         $image = imagecreatefromgif($filename);
                         imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
+                        
                         // Output
                         imagejpeg($image_p, 'thumbnails/' . $newName, 100);
+
                     }
 
                     else {
@@ -311,17 +338,44 @@ if(($comm || $image || $url) && $bumpLimitOk) {
     
                     //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
                 } else {
-                    //echo "Sorry, there was an error uploading your file.";
+                    echo "Sorry, there was an error uploading your file.";
                 }
             }
         }
     }
-
-    //posts must be at least x characters long (if they don't contain an image)
-    if(strlen($comm) < 20 && !$image) {
+    /*
+    //posts must be at least x characters long (if they don't contain an image and if the user is not logged in)
+    if(strlen($comm) < 20 && !$image && !$loggedIn) {
         echo "Posts must be at least 20 characters long";
         $uploadOk = 0;
     }
+    */
+
+    // BLOCK SPAM LINKS
+    /*
+    if (preg_match('/[А-Яа-яЁё]/u', $comm)) {
+        echo "Sorry, to prevent spam we blocked cyrillic characters";
+        $uploadOk = 0;
+    }
+        
+    
+    if (strpos($comm, 'http') !== false && !$loggedIn) {
+        echo "Sorry, to prevent spam only logged in users can post 'http' links. Just write 'ht tp' instead";
+        $uploadOk = 0;
+    }
+    
+    if (strpos($comm, 'w w w') !== false) {
+        echo "Sorry, to prevent spam we blocked the string 'w w w'";
+        $uploadOk = 0;
+    }
+
+    if (strpos($comm, 'buyreal') !== false) {
+        $uploadOk = 0;
+    }
+        if (strpos($comm, 'xrumer') !== false) {
+        $uploadOk = 0;
+    }
+    */
 
     if($uploadOk == 1 && !$op) {
         $sql = "INSERT INTO posts (name, options, subject, commento, dateTime, ipAddress, bump, board, imageUrl, image, fileName, loggedIn, isMod, fortune) VALUES ('$name', '$options', '$subj', '$comm', '$date', '$ipAddr', '$newBump', '$boardName', '$url', '$newName', '$oldName', '$loggedIn', '$isMod', '$fortune')";

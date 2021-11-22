@@ -1,10 +1,11 @@
 <?php
 
-$top_message = '<p><strong>FUCK WITH THE BEST DIE LIKE THE REST</strong></p>';
+$top_message = "<p id='topMessage'></p>";
 
 function printHead() {
 
-    $style = 'cyber';
+    
+    $style = 'cyber2';
 
     if($_GET['style']) {
         $style = $_GET['style'];
@@ -12,10 +13,16 @@ function printHead() {
     }
     else if($_COOKIE["style"])
         $style = $_COOKIE["style"];
-
-    echo '<link rel="stylesheet" type="text/css" href="/themes/base.css?v=' . time() . '">';
-
-    echo '<link rel="stylesheet" type="text/css" href="/themes/' . $style . '.css?v=' . time() . '">';
+/*
+    if(!isMobileDevice())
+        echo '<link rel="stylesheet" type="text/css" href="/themes/cyber2.css">';
+    else
+        echo '<link rel="stylesheet" type="text/css" href="/themes/mobile.css">';
+*/
+    if(!isMobileDevice())
+        echo '<link rel="stylesheet" type="text/css" href="/cyber2.css?v=' . time() . '">';
+    else
+        echo '<link rel="stylesheet" type="text/css" href="/mobile.css?v=' . time() . '">';
 
     echo '<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -42,17 +49,22 @@ function printPost($con, $isMod, $rowReplies) {
                 /*
                 //santa hat
                 if($rowReplies['image']) 
-                    echo '<img class="santahat" src="/santahat.png">';
+                    echo '<img class="santahat" src="/images/santahat.png">';
                 */
                 /*
                 //valentines day
                 if($rowReplies['image']) 
-                    echo '<img class="santahat" src="/hearts.png">';
+                    echo '<img class="santahat" src="/images/hearts.png">';
                 */
                 /*
                 //halloween
                 if($rowReplies['image']) 
-                    echo '<img class="santahat" src="/pumpkin.png">';
+                    echo '<img class="santahat" src="/images/pumpkin.png">';
+                */
+                /*
+                // easter
+                if($rowReplies['image']) 
+                    echo '<img class="santahat" src="/images/eggs.png">';
                 */
                 //display posts
                 if($rowReplies['replyTo'])
@@ -60,22 +72,38 @@ function printPost($con, $isMod, $rowReplies) {
                 else 
                     echo '<div class="post op" id="'.$id.'">';
 
+                /*
                 //show picture if present (URL)
                 if($rowReplies['imageUrl'])
                     echo "<img style='float:left;' class='smallUrl' id=$urlID src=$rowImageUrl onclick='resizeUrl(this.id)'>";
-
+                */
                 //show picture if present
+                /*
                 if($rowReplies['image']) {
                     if (strpos($rowReplies['image'], 'mp3')) 
                         echo '<audio controls><source src="/uploads/'.$rowReplies['image'].'" type="audio/mpeg"></audio>';
                     else if (strpos($rowReplies['image'], 'webm')) 
                         echo '<video width="320" height="240" preload="metadata" controls><source src="/uploads/'.$rowReplies['image'].'" type="video/webm"></video>';
                     else if (strpos($rowReplies['image'], 'pdf')) 
-                        echo '<a target="_blank" href="/uploads/'.$rowReplies['image'].'"><img style="height:150px; width:auto;" src="/pdflogo.png"></a>';
+                        echo '<a target="_blank" href="/uploads/'.$rowReplies['image'].'"><img style="height:150px; width:auto;" src="/images/pdflogo.png"></a>';
                     else 
-                        echo "<img style='float:left;' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
+                        echo "<img class='thumbnail' style='float:left;' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
                 }
+                */
 
+                //show picture if present
+                /*
+                if($rowReplies['image']) {
+                    if (strpos($rowReplies['image'], 'mp3')) 
+                        echo '<audio controls><source src="/uploads/'.$rowReplies['image'].'" type="audio/mpeg"></audio>';
+                    else if (strpos($rowReplies['image'], 'webm')) 
+                        echo '<video width="320" height="240" preload="metadata" controls><source src="/uploads/'.$rowReplies['image'].'" type="video/webm"></video>';
+                    else if (strpos($rowReplies['image'], 'pdf')) 
+                        echo '<a target="_blank" href="/uploads/'.$rowReplies['image'].'"><img style="height:150px; width:auto;" src="/images/pdflogo.png"></a>';
+                    else 
+                        echo "<img class='thumbnail' style='float:left;' id=$imageID src=$rowImage onclick='resizepic(this.id)'>";
+                }
+                */
                 //PRINT POST INFO
                 echo "<form action='#' method='post' style='vertical-align:top; display: inline-block';>";
                 echo "<p style='padding-left:10px; padding-right:10px;'>";
@@ -88,6 +116,9 @@ function printPost($con, $isMod, $rowReplies) {
                     echo " <span style='cursor:pointer;' title='Admin' class='adminLogo'>☯</span> ";
                 else if($rowReplies['isMod'] == 2)
                     echo " <span style='cursor:pointer;' title='Mod' class='modLogo'>☯</span> ";
+                else if($rowReplies['loggedIn'] == 1 && ($rowReplies['name'] == "Gogil" || $rowReplies['name'] == "Sharknado" || $rowReplies['name'] == "FishByte"))
+                    //echo " <span style='cursor:pointer;' title='Superuser' class='superuser'>&#9733</span> ";
+                    echo "<img title='Superuser' class='redstar' src='/images/redstar.png'>";
                 else if($rowReplies['loggedIn'] == 1)
                     echo " <span style='cursor:pointer;' title='Registered User' class='userLogo'>&#9733</span> ";
 
@@ -114,7 +145,8 @@ function printPost($con, $isMod, $rowReplies) {
                 echo "</strong></span>";
 
                 //print date and time
-                echo "<span class='info'> {$rowReplies['dateTime']}</span>";
+                $justDate = substr($rowReplies['dateTime'], 0, 10);
+                echo "<span class='info'> {$justDate}</span>";
 
                 //print post number
                 if($rowReplies['replyTo'])
@@ -128,7 +160,7 @@ function printPost($con, $isMod, $rowReplies) {
 */
                 //print sticky logo
                 if($rowReplies['sticky'])
-                    echo " <img title='Sticky' src='/sticky.gif'>";
+                    echo " <img title='Sticky' src='/images/sticky.gif'>";
 /*
                 //print blue arrow
                 $hiddenButton = (string)$rowReplies['ID'] . 'btn';
@@ -143,6 +175,9 @@ function printPost($con, $isMod, $rowReplies) {
                 else
                     echo " <button id='$hiddenButton' style='display:none;' type='submit' name='report' value='{$rowReplies['ID']}'>Report</button>";
 */
+                //show delete button if user is admin
+                if($isMod == 1)
+                    echo " <button id='deleteButton' type='submit' name='delete' value='{$rowReplies['ID']}'>[Delete]</button>";
 
                 //links to post replies
                 echo '<span class="linksToReplies">';
@@ -162,11 +197,13 @@ function printPost($con, $isMod, $rowReplies) {
                         echo   "<A style='text-decoration: underline;' onmouseover='preview(event, ".$ltrrow['ID'].")' onmouseout='hidePostPreview()' class='postlink'>>>".$ltrrow['ID']."</A> ";
                 }
                 echo '</span>';
-
+                /*
                 //print url info
                 if($rowReplies['imageUrl']) 
                     echo '<br>Url: <a target="_blank" href="' . $rowImageUrl . '">' . $rowImageUrl . '</a>';
+                */
 
+                /*
                 //print image info
                 if($rowReplies['image']) {
                     //fileSize
@@ -178,9 +215,10 @@ function printPost($con, $isMod, $rowReplies) {
                     //dimensions
                     list($width, $height) = getimagesize('uploads/' . $rowReplies['image']);
                     $dimensions = $width . 'x' . $height;
-                    echo '<br>File: <a target="_blank" href="/uploads/' . $rowReplies['image'] . '">' . $rowFileName . '</a> (' . $fileSize . ', ' . $dimensions . ')';
+                    //echo '<br>File: <a target="_blank" href="/uploads/' . $rowReplies['image'] . '">' . $rowFileName . '</a> (' . $fileSize . ', ' . $dimensions . ')';
+                    echo '<br>File: <a target="_blank" href="/uploads/' . $rowReplies['image'] . '">' . $rowFileName . '</a>';
                 }
-
+                */
                 //check if post is banned and echo message
                 $sql2 = "SELECT * FROM bannedPosts";
                 $res2 = mysqli_query($con, $sql2);
@@ -222,6 +260,10 @@ function printPost($con, $isMod, $rowReplies) {
          
                        $word = checkYoutube($word);
                        $word = wordFilter($word);
+                       if (strpos($word, '[spoiler]') !== false)
+                        echo '<span class="spoiler">';
+                        if (strpos($word, '[/spoiler]') !== false)
+                        echo '</span>';
             
                         //if word is a link to a post, show post preview
                         $checkLink = htmlspecialchars_decode($word);
@@ -234,16 +276,16 @@ function printPost($con, $isMod, $rowReplies) {
                         else
                             echo nl2br("$word "); 
                     }
-                    echo nl2br("</span>");
+                    // end redtext and spoiler span
+                    echo nl2br("</span></span>");
                 }
 
                 echo '</p></form></div><br>';
 }
 
-
-
-
-
+function isMobileDevice() {
+    return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
+}
 
 function compareDates($older, $newer) {
     $older = str_replace('/', '-', $older);
@@ -297,7 +339,7 @@ function fortune($num) {
 }
 
 function banner() {
-    $banner = "<a href = 'https://4kev.org/'><img style='height:100px; width:300px;' class='banner' src = '/banners/" . rand(0, 82) . ".gif' /></a>";
+    $banner = '<a href = "/index.php"><img id="banner" src = "/banners/' . rand(0, 94) . '.gif" /></a>';
     echo $banner;
 }
 
@@ -436,6 +478,64 @@ function onlineUsers($con) {
     return $onlineUsers;
 }
 
+function topBar($con, $query, $header) {
+
+        //<a href='/index.php'><button id='homePageButton'>Home</button></a>";
+/*
+        // print new thread button or reply button if user is logged in
+        if(isset($_SESSION['ID'])) {
+            if($query == $header)
+                echo '<button id="showPostWindow" onclick="showPostWindow()">New Thread</button>';
+            if(is_numeric($query))
+                echo '<button id="showPostWindow" onclick="showPostWindow()">Reply</button>';
+        }
+*/
+
+        if(!isset($_SESSION['ID'])) {
+
+        // REGISTER FORM
+        echo'
+        <button id="showLoginWindow" onclick="showLoginWindow()">Login / Register</button>
+        <br>
+        <div id="registerWindow" class="draggable">
+            <form id="registerForm" action= "/register.php" method="post" onsubmit="myButton.disabled = true; return true;">
+                <input type="text" placeholder="Name" name="name" /><br>
+                <input type="password" placeholder="Password" name="pwd" /><br>
+                <input type="password" placeholder="Confirm password" name="pwd2" /><br>
+                <input type="text" placeholder="Email" name="email" /><br>
+                <textarea name="JS_enabled" id="JS_enabled" style="display:none"></textarea>
+                <button id="registerButton" type="submit">Register</button>
+            </form>
+        </div>'
+        ; 
+
+        // LOGIN FORM
+        echo '
+            <div id="loginWindow" class="draggable">
+                <form id="loginForm" action= "/login.php?op=' . $query . '&board=' . $query . '&x=' . $_SERVER['PHP_SELF'] . '" method="post" onsubmit="myButton.disabled = true; return true;">            
+                    <input type="text" name="email" placeholder="Email" />
+                    <input type="password" name="pwd" placeholder="Password" />
+                    <button id="loginButton" type="submit">Log In</button>
+                </form>
+                <p>Not registered yet?</p>
+                <button id="showRegisterWindow" onclick="showRegisterWindow()">Sign Up</button>
+            </div>';
+        }
+        else {
+            $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
+                $res = mysqli_query($con, $sql);
+                while($row = mysqli_fetch_assoc( $res ))
+                    //<p style="text-height:30px; display:inline;">Logged in as <strong>' . $row["name"] . '</strong></p>
+                    echo '                                                                   
+                        <form id="logoutForm" action= "/logout.php?op=' . $query . '&board=' . $query . '&x=' . $_SERVER['PHP_SELF'] . '" method="post"> 
+                            <button id="logoutButton">Logout (' . $row["name"] . ')</button>
+                        </form>
+                        <br>                 
+                        ';
+        }
+        echo "<br>";
+}
+
 function searchForm($con) {
     echo "
     <div id='searchForm'>
@@ -445,19 +545,30 @@ function searchForm($con) {
         </form>
     </div>
     ";
-    
 }
 
 function loginForm($con, $query) {
-    if(!isset($_SESSION['ID']))
+    if(!isset($_SESSION['ID'])) {
+        // LOGIN FORM AND REGISTER FORM
         echo '
-        <button id="showLogin" style="text-align:center; height:30px;" onclick="showLogin()">Log In</button>
-        <div id="login" style="display:none;">
+        <div id="login">
         <form action= "/login.php?op=' . $query . '&board=' . $query . '&x=' . $_SERVER['PHP_SELF'] . '" method="post" onsubmit="myButton.disabled = true; return true;">
-        <input type="text" name="email" placeholder="Email" /><br>
-        <input type="password" name="pwd" placeholder="Password" /><br>
-        <button type="submit" name="myButton" style="text-align:center; height:30px; width:150px">Log In</button>
+        <input type="text" name="email" placeholder="Email" />
+        <input style="display:inline-block" type="password" name="pwd" placeholder="Password" />
+        <button type="submit" name="myButton" style="text-align:center; height:30px">Log In</button>
+        </form>
+        <button id="showRegisterForm" onclick="showRegisterForm()">Sign Up</button>
+        </div>
+
+        <div id="registerForm" style="display:none; margin: 0 auto; width:200px;">
+        <form action= "register.php" method="post" onsubmit="myButton.disabled = true; return true;">
+        <input type="text" placeholder="Name" name="name" /><br>
+        <input type="password" placeholder="Password" name="pwd" /><br>
+        <input type="password" placeholder="Confirm password" name="pwd2" /><br>
+        <input type="text" placeholder="Email" name="email" /><br>
+        <button style="text-align:center; height:30px; width:100%" type="submit" name="myButton">Sign Up</button>
         </form></div>';
+    }
     else {
         $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
             $res = mysqli_query($con, $sql);
@@ -472,48 +583,64 @@ function loginForm($con, $query) {
     }
 }
 
+function boardList($con) {
 
-function boardList($con, $query) {
-
-echo '<div id="boardlist_background"></div>';
-
-
-echo '<div id="boardlist">';
-
-//BOARDS
-$boardList = array('random', 'anime', 'cyberpunk', 'design', 'development', 'feels', 'music', 'technology', 'meta');
-foreach($boardList as $boardName)
-    echo '<a href="/boards/' . $boardName . '/"><p class="boards">&nbsp;' . ucfirst($boardName) . '</p></a>';
-    echo '<a href="/index.php"><p class="boards">&nbsp;Home</p></a>';
-
-echo '</div>';
+    $boardList = array('technology', 'programming', 'media', 'random', 'meta', );
+    // DESKTOP
+    if (!isMobileDevice()) {
+        echo '<div id="boardlist">';
+        //echo '<a href="https://www.4kev.org/index.php"><p class="boards">Home</p></a>';
+        foreach($boardList as $boardName)
+            echo '<a href="/boards/' . $boardName . '/"><p class="boards">' . ucfirst($boardName) . '</p></a>';
+        echo '</div>';
+    }
+    
+    // MOBILE
+    else {
+        echo '<select style="padding-left:30px; -webkit-appearance:none;" id="boardlist" onchange="location = this.value;">';
+        echo '<option selected hidden>Boards</option>';
+        //echo '<option value="https://www.4kev.org/index.php">Home</option>';
+        foreach($boardList as $boardName)
+            echo '<option value="/boards/' . $boardName . '/">' . ucfirst($boardName) . '</option>';
+        echo '</select>';
+    }
+    
 }
 
 function footer($con) {
-    echo '<div id="footer">';
-
+    echo '<div id="footer" style="text-align:center">';
     //OTHERS
     $sql = "SELECT * FROM hitCounter";
     $res = mysqli_query($con, $sql);
     while($row = mysqli_fetch_assoc($res))
         $count = $row['count'];
 
-    echo '<p>
-        Users online: '.onlineUsers($con).'
-         | Users last 24h: '.activeUsers($con).'
-         | Visits: '.$count.'
-         | <a href="/statistics.php">Statistics</a>
-         | <a onclick="showRules()">Rules</a>
-         | <a href="https://github.com/federicoolivo/4kev">GitHub</a>
-         | <a href="?style=cyber">Cyber</a>
-         | <a href="?style=windows95">Windows95</a>
-         | <a href="?style=stalenhag">Stålenhag</a>
-         | 4kev@protonmail.com
-        </p>';
+    //TOTAL FILE SIZE
+    $size = 0;
+    $sql = "SELECT image FROM posts WHERE image";
+    $res = mysqli_query($con, $sql);
+    while($row = mysqli_fetch_assoc($res)) 
+        $size += filesize('uploads/' . $row['image']);
 
-    echo '<hr>';
+    /*echo '<p style="display:inline">Users Online: '.onlineUsers($con).'
+        <br>Users Today: '.activeUsers($con).'
+        <br>Active Content: ' . round($size / 1000000) . ' MB
+        <br>4kev@protonmail.com
+        </p>';
+    */
+
+    echo '<p style="display:inline">Users Online: '.onlineUsers($con).'
+        <br>Active Content: ' . round($size / 1000000) . ' MB
+        <br>4kev@protonmail.com
+        </p>';
+    
 /*
     //THEMES
+
+         | <a href="?style=cyber">Cyber</a>
+         | <a href="?style=windows95">Windows95</a>
+         | <a href="?style=modern">Modern</a>
+
     echo '<p>
         <a href="index.php?style=cyber">Cyber</a>
         <a href="index.php?style=normie">Normie</a>

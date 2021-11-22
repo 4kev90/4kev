@@ -7,15 +7,6 @@ include('connectToDatabase.php');
 //connect to database
 $con = connect_to_database();
 
-
-if($_GET['style']) {
-    $style = $_GET['style'];
-
-    setcookie('style', $style, time()+3600, '/');
-}
-else
-    $style = $_COOKIE["style"];
-
 //UPDATE ACTIVE HOURS
 date_default_timezone_set('Europe/Paris');
 $hour = date('H', time());
@@ -51,6 +42,11 @@ while($row = mysqli_fetch_assoc($res)) {
     else $activeUsers++;
 }
 
+// update visitLog
+$sql = "INSERT INTO visitLog (ipAddress, dateTime) VALUES ('$ipAddr','$date')";
+$res = mysqli_query($con, $sql);
+
+
 //UPDATE HIT COUNTER
 $sql = "SELECT * FROM hitCounter";
 $res = mysqli_query($con, $sql);
@@ -67,12 +63,129 @@ while($row = mysqli_fetch_assoc($res)) {
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <?php printHead(); ?>
 </head>
-
 <body>
 
-<?php loginForm($con); ?>
+<div class="bgHome">
 
-<div class="bgImage">
+    <!--<div id="lastImages">-->
+    <?php
+    /*
+        //display last images
+        $sql = "SELECT * FROM posts ORDER BY ID DESC";
+        $res = mysqli_query($con, $sql);
+        $cont = 0;
+        while(($cont < 10) && $row = mysqli_fetch_assoc( $res )) {
+            if($row['image'] && ($row['board'] != 'test')) {
+
+                //link to thread
+                if($row['replyTo'])
+                    $num = $row['replyTo'];
+                else
+                    $num = $row['ID'];
+                $threadlink = "https://4kev.org/threads/" . $num  . "#" . $row['ID'];
+
+                //board
+                //echo "<p style='text-align:center'><strong>No.{$row['ID']} {$row['board']}<br></strong></p>";
+
+                //picture
+                if($row['image']) {
+                    $pic = $row['image'];
+
+                    echo "<a class='homePageImageLink' href='$threadlink'>";
+
+                      if (strpos(strtolower($pic), 'pdf'))
+                          echo "<img class='homePageImage' src='images/pdflogo.png'>";
+                      else if (!strpos($pic, 'webm') && !strpos($pic, 'mp3')) 
+                          echo "<img class='homePageImage' src='thumbnails/$pic'>";
+                      else
+                          echo "<img class='homePageImage' src='images/video.png'>";
+
+                    echo "</a>";
+
+                    $cont++;
+                }
+                //url
+                if($row['imageUrl']) {
+                    $url = $row['imageUrl'];
+                    echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='" . $row['imageUrl'] . "'></a></p>";
+                    $cont++;
+                }
+            }
+        }
+    */
+    ?>
+    <!--</div>-->
+
+    <?php
+        echo "<br>";
+        banner();
+        echo "<p id='boardName'>4KEV WILL SHUT DOWN ON NOVEMBER 20<br>THANK YOU ALL</p>";
+        //echo "<p id='about'>The website is under maintenance. The old homepage is available at https://www.4kev.org/lastposts.php</p>";
+    ?>
+    <p class="homePageSection">Boards</p>
+    <a href="https://www.4kev.org/boards/technology/"><button class="boardButton">Technology</button></a>
+    <a href="https://www.4kev.org/boards/programming/"><button class="boardButton">Programming</button></a>
+    <a href="https://www.4kev.org/boards/media/"><button class="boardButton">Media</button></a>
+    <a href="https://www.4kev.org/boards/random/"><button class="boardButton">Random</button></a>
+    <a href="https://www.4kev.org/boards/meta/"><button class="boardButton">Meta</button></a>
+    <br><br>
+
+    <p class="homePageSection">Last Posts</p>
+    <div text-align:center; padding:5px;">
+        <div id="lastPosts">
+            <?php
+                //display last posts
+                $sql = "SELECT * FROM posts ORDER BY ID DESC";
+                $res = mysqli_query($con, $sql);
+                //echo "<p style='text-align:center; font-weight:bold;'>LAST POSTS</p>";
+                $cont = 0;
+                while(($cont < 20) && $row = mysqli_fetch_assoc( $res )) {
+                    if($row['commento'] && ($row['board'] != 'test')) {
+
+                        //stampa link to thread
+                        if($row['replyTo'])
+                            $num = $row['replyTo'];
+                        else
+                            $num = $row['ID'];
+                        $threadlink = "https://4kev.org/threads/" . $num . "#" . $row['ID'];
+
+                        //stampa board
+                        //echo "<p><a class='homePageCommentLink' href='$threadlink'><span class='homePageCommentInfo'>{$row['ID']} </span><span class='homePageComment'>";
+                        // echo "<p><a class='homePageCommentLink' href='$threadlink'>{$row['ID']} <span class='homePageComment'>";
+                        echo "<a href='$threadlink'><div class='homePageCommentLink'><p>";
+
+                        //stampa commento
+                            $rowComment = htmlspecialchars($row['commento']);
+                        //divide line into words
+                            $words = explode(" ", $rowComment);
+                            foreach ($words as $word) {
+                               $word = wordFilter($word);
+                               echo "$word "; 
+                            }
+                        echo "</p></div></a><br>";
+                        $cont++;
+                    }
+                }
+            ?>
+        </div>
+
+    </div>
+
+    <p class="homePageSection">Stats</p>
+    <?php footer($con); ?>
+
+    <p class="homePageSection">Friends</p>
+    <a href="https://onee.ch/" target="_blank"><img class="banners" src="/images/banner_oneechan.png"></a>
+    <a href="https://iji.cx/" target="_blank"><img class="banners" src="/images/banner_iji.gif"></a>
+
+<!--
+    <div id="banners">
+        <a><img class="banners" src="/images/banner_iji.gif"></a>
+        <a><img class="banners" src="/images/banner_oneechan.png"></a>
+    <div>
+-->
+</div>
+
 <!--
     <div class="snowflakes" aria-hidden="true">
       <div class="snowflake">
@@ -107,170 +220,6 @@ while($row = mysqli_fetch_assoc($res)) {
       </div>
     </div>
 -->
-    <?php searchForm($con); ?>
 
-    <?php boardList($con); ?>
-
-    <br>
-        <!--BANNER-->
-        <?php banner(); ?>
-        <br>
-        <p id="boardName"><strong>Welcome to 4kev</strong></p>
-        <?php echo $top_message; ?>
-
-    <br>
-
-    <!--ERROR / CONFIRMATION MESSAGE -->
-    <?php
-        $err = (isset($_GET['err'])) ? $_GET['err'] : 0;
-        if($err == 1)
-            echo '<table><td style="height:30px; background:lightgreen; border:1px solid darkgreen; border-spacing: 1px; padding: 3px;"><p>You will receive an activation email</p></td></table>';
-        if($err == 2)
-            echo '<table><td style="height:30px; background:lightcoral; border:1px solid darkred; border-spacing: 1px; padding: 3px;"><p>Name is already taken</p></td></table>';
-        if($err == 3)
-            echo '<table><td style="height:30px; background:lightcoral; border:1px solid darkred; border-spacing: 1px; padding: 3px;"><p>Email is already registered</p></td></table>';
-        if($err == 4)
-            echo '<table><td style="height:30px; background:lightgreen; border:1px solid darkgreen; border-spacing: 1px; padding: 3px;"><p>Your account is now active</p></td></table>';
-        if($err == 5)
-            echo '<table><td style="height:30px; background:lightcoral; border:1px solid darkred; border-spacing: 1px; padding: 3px;"><p>Incorrect password. Try again</p></td></table>';
-        if($err == 6)
-            echo '<table><td style="height:30px; background:lightcoral; border:1px solid darkred; border-spacing: 1px; padding: 3px;"><p>Password is too short (min 8 characters)</p></td></table>';
-    ?>
-
-
-
-    <!--REGISTER BUTTON-->
-    <?php
-        if(!isset($_SESSION['ID']))
-            echo '<button id="showForm" style="width:100px; text-align:center; height:30px;" onclick="showForm()">Register</button>';
-    ?>
-
-    <!--REGISTER WINDOW-->
-        <div id="form" style='display:none; margin: 0 auto; width:200px;'>
-        <form action= "register.php" method="post" onsubmit="myButton.disabled = true; return true;">
-            <input type="text" placeholder="Name" name="name" /><br>
-            <input type="password" placeholder="Password" name="pwd" /><br>
-            <input type="password" placeholder="Confirm password" name="pwd2" /><br>
-            <input type="text" placeholder="Email" name="email" /><br>
-            <button style="text-align:center; height:30px; width:100%" type="submit" name="myButton">Register</button>
-        </form>
-        </div>
-        <br><hr>
-</div>
-
-<!--
-<div style="display:inline-block; float:left; width:10%; text-align:center;">
-    <a target="_blank" href="https://ceil-m.tumblr.com/"><img src="http://www.4kev.org/uploads/12014.png"></a>
-</div>
--->
-
-<div style="display:inline-block; float:left; width:75%">
-    
-    <div class="lastPosts" style="float:right; width:93%; margin-right: 10px;">
-
-        <?php
-            //display last posts
-            $sql = "SELECT * FROM posts ORDER BY ID DESC";
-            $res = mysqli_query($con, $sql);
-            echo "<strong><p style='text-align:center'>LAST POSTS</p></strong>";
-            $cont = 0;
-            while(($cont < 70) && $row = mysqli_fetch_assoc( $res )) {
-                if($row['board'] != "test" && $row['board'] != "traps" && $row['commento']) {
-
-                    //stampa link to thread
-                    if($row['replyTo'])
-                        $num = $row['replyTo'];
-                    else
-                        $num = $row['ID'];
-                    $threadlink = "https://4kev.org/threads/" . $num . "#" . $row['ID'];
-
-                    //stampa board
-                    echo "<p><a href='$threadlink'><strong>No.{$row['ID']} {$row['board']}</strong><br></a>";
-
-                    //stampa commento
-                        $rowComment = htmlspecialchars($row['commento']);
-                    //divide line into words
-                        $words = explode(" ", $rowComment);
-                        foreach ($words as $word) {
-                           $word = wordFilter($word);
-                           echo "$word "; 
-                        }
-
-                
-
-                echo "</p>";
-                $cont++;
-            }
-
-            }
-        ?>
-    </div>
-</div>
-
-<div style="display:inline-block; float:right; width:25%">
-    <div class="post" style="width:80%">
-        <?php
-            //display last images
-            $sql = "SELECT * FROM posts ORDER BY ID DESC";
-            $res = mysqli_query($con, $sql);
-            echo "<strong><p style='text-align:center'>LAST IMAGES</p></strong>";
-            $cont = 0;
-            while(($cont < 15) && $row = mysqli_fetch_assoc( $res )) {
-                if($row['board'] != "test" && ($row['image'] || $row['imageUrl'])) {
-
-                    //link to thread
-                    if($row['replyTo'])
-                        $num = $row['replyTo'];
-                    else
-                        $num = $row['ID'];
-                    $threadlink = "https://4kev.org/threads/" . $num  . "#" . $row['ID'];
-
-                    //board
-                    echo "<p style='text-align:center'><strong>No.{$row['ID']} {$row['board']}<br></strong></p>";
-
-                    //picture
-                    if($row['image']) {
-                        $pic = $row['image'];
-                        if (strpos(strtolower($pic), 'pdf'))
-                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='pdflogo.png'></a></p>";
-                        else if (!strpos($pic, 'webm') && !strpos($pic, 'mp3')) 
-                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='thumbnails/$pic'></a></p>";
-                        else
-                            echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='video.png'></a></p>";
-                        $cont++;
-                    }
-                    //url
-                    if($row['imageUrl']) {
-                        $url = $row['imageUrl'];
-                        echo "<p style='text-align:center'><a href='$threadlink'><img style='width:170px; height:auto;' src='" . $row['imageUrl'] . "'></a></p>";
-                        $cont++;
-                    }
-                }
-            }
-        ?>
-    </div>
-</div>
-<div style="clear:both" />
-<br>
-<hr>
-
-</div>
-
-<!--RULES-->
-<div id='rules' style='display:none; text-align:center'>
-    <div class="post">
-        <p align='left'>
-            1) be polite to other users<br>
-            2) do not spam or flood the website<br>
-            3) do not post pornography or disturbing content<br>
-            4) do not post degenerate content<br>
-        </p>
-    </div>
-    <hr>
-</div>
-
-<?php footer($con); ?>
-
-<br>
 </body>
 </HTML>

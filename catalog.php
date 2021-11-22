@@ -71,13 +71,15 @@ if($_POST['report']) {
 </head>
 <body>
 
-<?php loginForm($con, $boardName); ?>
-
 <div class="bgImage">
 
-    <?php searchForm($con); ?>
-
     <?php
+        boardList($con, $boardName);
+        echo "<br>";
+        echo "<br>";
+        echo "<p id='boardName'>" . strtoupper($boardName) . "</p>";
+        echo '<a href="/boards.php?board=' . $boardName . '"><button id="catalogButton">Return</button></a>';
+        echo '<button id="showPostWindow" onclick="showPostWindow()">New Thread</button>';
 
         //print a message if a post has been reported
         if($_POST['report'])
@@ -85,76 +87,52 @@ if($_POST['report']) {
 
         //you must wait 2 minutes before posting a new thread
         if($_GET['message'])
-            echo '<script> alert("You must wait two minutes before starting a new thread."); </script>';
+            echo '<script> alert("You must wait longer before making a new post."); </script>';
     ?>
 
-    <?php boardList($con, $boardName); ?>
-
-    <br>
-    <div id="boardName">
-    <!--BANNER-->
-    <?php banner(); ?>
-    <p style="font-size:30px"><strong><?php echo ucfirst($boardName); ?></strong></p>
-    <?php echo $top_message; ?>
-    </div>
-    <br><br>
-
-    <!--POST THREAD BUTTON-->
-    <button id="showForm" style="text-align:center; height:30px;" onclick="showForm()">Start a New Thread</button>
-
     <!--submission form-->
-    <div class="form" id="form" style="display:none; margin: 0 auto;">
-        <?php echo '<form style="display:inline;" action= "/newPost.php?board='.$boardName.'" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">'; ?>
+    <div id="postWindow" class="draggable">
+        <button id="closePostWindow" class='close'>✖</button>
+        <p style="text-align:center;"><strong>Start a new thread</strong></p>
+
+        <?php $captcha_number = rand(1,9); ?>
+        <?php echo '<form action="/newPost.php?board='.$boardName.'&captcha=' . $captcha_number . '" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">'; ?>
         
-            <?php
+            <?php 
             if(isset($_SESSION['ID'])) {
                 $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
                 $res = mysqli_query($con, $sql);
                     while($row = mysqli_fetch_assoc( $res ))
-                        echo "<strong><p class='userName'>" . $row['name'] . "</p></strong>";
+                        echo "<strong><p style='text-align:center' class='userName'>" . $row['name'] . "</p></strong>";
             }
             else
-                echo '<textarea style="width:300px;" placeholder="name" rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
+                echo '<textarea placeholder="Name" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
             ?>
-            <textarea style="width:300px;" placeholder="Options" rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
-            <textarea style="width:300px;" placeholder="Subject" rows="1" cols="30" input type="text" name="subject" /></textarea><br>
-            <input style="width:300px;" type="file" name="fileToUpload" id="fileToUpload"><br>
-            <textarea placeholder="Comment" style="resize:both; width:300px;" rows="4" cols="40" input type="text" name="comment" /></textarea><br>
-            <button style="text-align:center; height:30px; width:300px" type="submit" value="Post" name="myButton">Post</button>
-            
-        
+            <textarea placeholder="Subject" input type="text" name="subject" /></textarea><br>
+            <textarea class="commentField" placeholder="Comment" input type="text" name="comment" /></textarea><br>
+
+            <div class="captcha">
+                <?php 
+                    echo "<img id='new_thread_captcha_image' name='captcha" . $captcha_number . "' src='/captchas/captcha" . $captcha_number . ".png'>";
+                ?>
+                <textarea id="new_thread_captcha_typed" name="captcha_typed" placeholder="Enter digits"></textarea>
+                <p id="mistyped_captcha_message" style="display:none; color:red;">You seem to have mistyped the CAPTCHA</p>
+            </div>
+
+            <textarea name="JS_enabled" id="JS_enabled" style="display:none">enabled</textarea>
+            <input name="fileToUpload" type="file" style="width:25%; float:left; bottom:0px; padding:0; margin:0; display: inline-block; vertical-align: middle;">
+            <button name="myButton" type="button" id="postButton" onclick="check_captcha()"  value="Post" class="postButton" >Post</button>
         </form>
     </div>
-    <br><hr>
+    <br>
+    <br>
 </div>
 
-<!--reply window-->
-<div id="draggable" class='replyWindow'>
-<p style="cursor:move; text-align:center;"><strong>Post a reply</strong><span class='close'>&times;</span></p>
-<form id='formAction' style='display:inline;' method='post' enctype='multipart/form-data' onsubmit='myButton.disabled = true; return true;'>
-<?php
-    if(isset($_SESSION['ID'])) {
-        $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
-        $res = mysqli_query($con, $sql);
-            while($row = mysqli_fetch_assoc( $res ))
-                echo "<strong><p style='text-align:center;' class='userName'>" . $row['name'] . "</p></strong>";
-    }
-    else
-        echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
-?>
-<textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
-<input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><br>
-<textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea><br>
-<button style="text-align:center; height:30px; width:300px" type="submit" name="myButton">Post</button>
-</form></div>
-
-<!--post preview-->
-<div class="post" id="preview" style="display:none"></div>
-
-<?php echo '<p>[<a href="boards/' . $boardName . '/">Thread List</a>]</p>'; ?>
 <hr>
 
 <?php
+
+//####################   PRINT POSTS   #######################
 
 $selectSQL = "SELECT * FROM posts ORDER BY bump DESC;";
 $selectRes = mysqli_query($con, $selectSQL);
@@ -183,7 +161,7 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
                 $y = (mysqli_query($con, $x));
                 $z = mysqli_fetch_assoc($y);
                 $q = $z['replies'];
-
+                
                 //get number of images in the thread
                 $x = "SELECT COUNT(*) AS imageReplies FROM posts WHERE replyTo = " . $row['ID'] . " AND image";
                 $y = (mysqli_query($con, $x));

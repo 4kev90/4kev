@@ -8,8 +8,6 @@ include('connectToDatabase.php');
 //connect to database
 $con = connect_to_database();
 
-
-
 //get board name
 if($_GET['board']) {
     $boardName = $_GET['board'];
@@ -71,13 +69,16 @@ if($_POST['report']) {
 </head>
 <body>
 
-<?php loginForm($con, $boardName); ?>
-
 <div class="bgImage">
 
-    <?php searchForm($con); ?>
-
-    <?php
+    <?php 
+        boardList($con, $boardName);
+        echo "<br>";
+        banner();
+        echo "<p id='boardName'>" . strtoupper($boardName) . "</p>";
+        //echo '<a href="/catalog.php?board=' . $boardName . '"><button id="catalogButton">Catalog</button></a><br><br>';
+        //topBar($con, $boardName, $boardName);
+        echo '<button id="showPostWindow" onclick="showPostWindow()">New Thread</button>';
 
         //print a message if a post has been reported
         if($_POST['report'])
@@ -88,76 +89,70 @@ if($_POST['report']) {
             echo '<script> alert("You must wait longer before making a new post."); </script>';
     ?>
 
-    <?php boardList($con, $boardName); ?>
-
-
-    <br>
-        <!--BANNER-->
-        <?php banner(); ?>
-        <br>
-        <p id="boardName"><strong><?php echo ucfirst($boardName); ?></strong></p>
-        <?php echo $top_message; ?>
-
-    <br>
-
-
-    <!--POST THREAD BUTTON-->
-    <button id="showForm" style="text-align:center; height:30px;" onclick="showForm()">Start a New Thread</button>
+    <!--hidden form to block bots-->
+    <form id="hiddenForm" action="https://www.4kev.org/index.php" method="post" enctype="multipart/form-data">
+        <textarea placeholder="Name" input type="text" name="name" /></textarea><br>'
+        <textarea placeholder="Subject" input type="text" name="subject" /></textarea><br>
+        <textarea class="commentField" placeholder="Comment" input type="text" name="comment" /></textarea><br>
+        <button type="submit" value="Post"></button>
+    </form>
 
     <!--submission form-->
-    <div class="form" id="form" style="display:none; margin: 0 auto;">
-        <?php echo '<form style="display:inline;" action= "/newPost.php?board='.$boardName.'" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">'; ?>
+    <div id="postWindow" class="draggable">
+        <button id="closePostWindow" class='close'>✖</button>
+        <p style="text-align:center;"><strong>Start a new thread</strong></p>
+
+        <?php echo '<form action="/newPost.php?board='.$boardName.'" method="post" enctype="multipart/form-data" onsubmit="myButton.disabled = true; return true;">'; ?>
         
-            <?php
+            <?php 
             if(isset($_SESSION['ID'])) {
                 $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
                 $res = mysqli_query($con, $sql);
                     while($row = mysqli_fetch_assoc( $res ))
-                        echo "<strong><p class='userName'>" . $row['name'] . "</p></strong>";
+                        echo "<strong><p style='text-align:center' class='userName'>" . $row['name'] . "</p></strong>";
             }
             else
-                echo '<textarea style="width:300px;" placeholder="name" rows="1" cols="30" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
+                echo '<textarea placeholder="Name" input type="text" name="name" /></textarea><br>';
             ?>
-            <textarea style="width:300px;" placeholder="Options"    rows="1" cols="30" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
-            <textarea style="width:300px;" placeholder="Subject"    rows="1" cols="30" input type="text" name="subject" /></textarea><br>
-            <!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
-            <input style="width:300px;" type="file" name="fileToUpload" id="fileToUpload"><br>
-            <textarea placeholder="Comment" style="resize:both; width:300px;" rows="4" cols="40" input type="text" name="comment" /></textarea><br>
-            <button style="text-align:center; height:30px; width:300px" type="submit" value="Post" name="myButton">Post</button>
-            
-        
+            <textarea placeholder="Subject" input type="text" name="subject" /></textarea><br>
+            <textarea class="commentField" placeholder="Comment" input type="text" name="comment" /></textarea><br>
+
+            <?php
+                if($isMod)
+                    echo ('<input name="fileToUpload" type="file">');
+            ?>
+            <button type="submit" id="postButton" value="Post" class="postButton" >Post</button>
         </form>
     </div>
-    <br><hr>
+    <br>
+    <br>
 </div>
 
 <!--reply window-->
-<div id="draggable" class='replyWindow'>
-<p style="cursor:move; text-align:center;"><strong>Post a reply</strong><span class='close'>&times;</span></p>
-<form id='formAction' style='display:inline;' method='post' enctype='multipart/form-data' onsubmit='myButton.disabled = true; return true;'>
-<?php
-    if(isset($_SESSION['ID'])) {
-        $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
-        $res = mysqli_query($con, $sql);
-            while($row = mysqli_fetch_assoc( $res ))
-                echo "<strong><p style='text-align:center;' class='userName'>" . $row['name'] . "</p></strong>";
-    }
-    else
-        echo '<textarea placeholder="Name" rows="1" style="width: 300px" input type="text" name="name" />' . $_COOKIE["keepName"] . '</textarea><br>';
-?>
-<textarea placeholder="Options" rows="1" style="width: 300px" input type="text" name="options" /><?php echo $_COOKIE['keepOptions']; ?></textarea><br>
-<!--<textarea style="width:300px;" placeholder="Image URL"  rows="1" cols="30" input type="text" name="url" /></textarea><br>-->
-<input type="file" style="display:inline" name="fileToUpload" id="fileToUpload"><br>
-<textarea id="linky" rows='4' style="width: 300px; resize:both;" input type='text' name='comment'></textarea><br>
-<button style="text-align:center; height:30px; width:300px" type="submit" name="myButton">Post</button>
-</form></div>
+<div id='replyWindow' class="draggable">
+    <button id="closeReplyWindow" class='close'>✖</button>
+    <p style="text-align:center;"><strong>Post a reply</strong></p>
+    <form id='formAction' style='display:inline;' method='post' enctype='multipart/form-data' onsubmit='myButton.disabled = true; return true;'>
+        <?php
+            if(isset($_SESSION['ID'])) {
+                $sql = "SELECT * FROM users WHERE ID = " . $_SESSION['ID'];
+                $res = mysqli_query($con, $sql);
+                    while($row = mysqli_fetch_assoc( $res ))
+                        echo "<strong><p style='text-align:center;' class='userName'>" . $row['name'] . "</p></strong>";
+            }
+            else
+                echo '<textarea name="name" placeholder="Name" type="text" /></textarea><br>';
+        ?>
+        <textarea class="commentField" name='comment' placeholder="Comment" id="linky" input type='text'></textarea><br>
+        <textarea name="JS_enabled" class="JS_enabled" style="display:none">enabled</textarea>
+        <!--<input name="fileToUpload" type="file">-->
+        <button name="myButton" type="submit" class="postButton" class"postButton">Post</button>
+    </form>
+</div>
 
 <!--post preview-->
 <div class="post" id="preview" style="display:none"></div>
 
-<div id="dropDown" style="display:none">test</div>
-
-<?php echo '<p>[<a href="/catalog.php?board=' . $boardName . '">Catalog</a>]</p>'; ?>
 <hr>
 
 
@@ -180,6 +175,8 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
             $cont = $cont+1; 
             if($cont > (($page-1)*15) && $cont <= ($page*15)) { 
 
+            echo "<br>";
+
             printPost($con, $isMod, $row);
 
             // THREAD EXPANSION
@@ -194,7 +191,7 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
             echo $q . ' replies';
 
             //print link to thread
-            echo " [<a href=/threads.php?op=".$row['ID'].">Reply</a>]";
+            echo " <a href=/threads.php?op=".$row['ID']."><button>Enter</button></a>";
 
             echo '</p>';
                 
@@ -212,7 +209,7 @@ while($row = mysqli_fetch_assoc( $selectRes )) {
 
             }
             echo '</div>';
-            echo '<hr>';
+            echo '<br><hr>';
         }
         }
     }

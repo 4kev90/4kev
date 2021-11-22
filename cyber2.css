@@ -1,0 +1,566 @@
+
+:root {
+  --black: #101014;
+  /*--darkBlue: rgba(25, 37, 50, 0.8);*/
+  --darkBlue: rgba(25, 37, 50, 0.8);
+  --border: #6a9dcf;
+  --misc: #6a9dcf;
+  --misc-hover: #74b6f5;
+  --blue: #6a9dcf;
+  --header: #6a9dcf; 
+  /*--green: #54C571;*/
+  --green: #6a9dcf;
+  --orange: #FBB917;
+  --red: #F62817;
+  --purple: #9932CC;
+}
+
+
+a {
+    cursor:pointer;
+    text-decoration: none;
+    color: var(--green);
+    text-shadow: 1px 1px 4px var(--blue);
+}
+
+p {
+    margin: 5px;
+    font-family: Arial;
+    font-size: 10pt;
+    color: var(--blue);
+}
+
+form {
+    padding:0;
+    margin:0;
+}
+
+textarea, input {
+    resize: none;
+    width: 100%;
+    height: 30px;
+    border: 0px solid var(--darkBlue);
+    border-radius: 5px;
+    color: var(--blue);
+    padding-left: 5px;
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
+    background-color: var(--black);
+}
+/* questo serve a non cambiare il colore dell'input field e del testo durante l'autofill */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px var(--black) inset;
+    -webkit-text-fill-color: var(--blue);
+}
+
+input[type='file']{
+  color: var(--blue);
+  background-color: var(--darkBlue);
+  width:25%;
+  float:left;
+  bottom:0px;
+  padding:0;
+  margin:0;
+  display: inline-block;
+  vertical-align: middle;"
+}
+
+html, body {
+    margin:0;
+    padding:0;
+}
+
+body {
+    background-image: url("/images/bgDark.jpg");
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+button {
+    text-align: center;
+    font-weight: bold;
+    height:30px;
+    color: var(--blue);
+    background-color: var(--darkBlue);
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 1px 1px 4px var(--blue);
+    -webkit-transition: background-color .2s;
+    transition: background-color .2s;
+}
+
+button:hover {
+    box-shadow: 1px 1px 8px var(--blue);
+}
+
+hr {
+    border-color: var(--border);
+    box-shadow: 0px 1px 2px #6a9dcf;
+    margin: 0px;
+}
+
+img {
+    max-width: 100%;
+    cursor: pointer;
+}
+
+#hiddenForm {
+    display: none;
+}
+
+#new_thread_captcha_image {
+    height: 30px;
+    width: 60px;
+    cursor: default;
+    float: left;
+}
+
+#new_thread_captcha_typed {
+    float: left;
+    width: 60px;
+    float: left;
+}
+
+.commentField {
+    height:60px;
+    resize:both;
+    min-width:400px;
+    min-height:30px;
+}
+
+#new_thread_captcha_typed {
+    display:inline;
+    width:30%
+}
+
+#about {
+    font-size: 15px;
+}
+
+#catalogButton, #homeButton {
+    width: 100px;
+    margin: 5px;
+}
+
+#loginWindow, #registerWindow {
+    display: none; 
+    background-color: var(--darkBlue);
+    border: 1px solid var(--border);
+    margin: 10px;
+    width: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px var(--blue);
+    z-index: 1;
+    position: fixed;
+    top: 10%;
+    right: 10%;
+}
+
+.draggable {
+    cursor: move;
+}
+
+.spoiler {
+	background-color: var(--blue);
+    color: var(--blue);
+}
+.spoiler:hover {
+    background-color: inherit;
+    color: inherit;
+}
+
+#postWindow, #replyWindow {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    top: 20%;
+    left: 33%;
+    background-color: var(--darkBlue);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    padding: 10px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px var(--blue);
+}
+
+#boardName {
+    margin: 20px;
+    font-weight: bold;
+    font-size: 35px;
+    color: var(--blue);
+    line-height: 50px;
+    text-shadow: 1px 1px 4px var(--blue);
+}
+
+#topMessage {
+    font-weight: bold;
+}
+
+#topBar {
+    text-align: center;
+    background-color: var(--darkBlue); 
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    height:50px;
+    padding: 0;
+    position: fixed;
+    top: 30;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    line-height: 30px;
+    background-size: 100%;
+    overflow: hidden;
+}
+
+#homePageButton {
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: inline-block;
+    max-width: 20%;
+    float: left;
+}
+
+#boardlist {
+    text-align: left;
+    font-weight: bold;
+    padding:0;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    line-height: 30px;
+    overflow: auto;
+    background-color: var(--darkBlue);
+}
+
+#searchForm {
+    display: inline-block;
+    width:300px;
+}
+
+#searchInput {
+    width: 50%;
+    border: 1px solid var(--blue);
+}
+
+#searchButton {
+    width: 60px;
+}
+
+#registerButton, #loginButton {
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
+    width: 100%;
+}
+
+.postButton {
+    width: 100px;
+    display: inline-block;
+    float: right;
+    right: 10px;
+    margin: 0;
+}
+
+#hiddenButton {
+    display: none;
+}
+
+#verifyButton {
+    width: 100px;
+    display: inline-block;
+    float: left;
+    left: 10px;
+    margin: 0;
+}
+
+.boardButton {
+    height: 50px;
+    width: 150px;
+    margin: 5px;
+    font-size: 15px;
+}
+
+#banners {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: right
+}
+
+.banners {
+    height: 50px;
+    width:150px;
+    margin: 5px;
+    display: inline-block;
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    box-shadow: 1px 1px 4px var(--blue);
+    -webkit-transition: background-color .2s;
+    transition: background-color .2s;
+}
+
+.banners:hover {
+    box-shadow: 1px 1px 8px var(--blue);
+}
+
+}
+
+#showRegisterWindow {
+    width: 100%;
+}
+
+#logoutForm {
+    display: inline-block;
+}
+
+#showLoginWindow {
+    width: 200px;
+    display: inline-block;
+}
+
+#showPostWindow {
+    width: 150px;
+}
+
+#lastImages {
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    height: 120px;
+    overflow: hidden;
+    position: inherit;
+    margin-top:0px;
+    padding:0px;
+    background-color: var(--black);
+    border: 0px solid var(--border);
+}
+
+#lastPosts {
+    text-align: left;
+    display:inline-block;
+    margin-top: 0px;
+    width:70%;
+}
+
+#preview {
+    z-index: 1;
+    position: fixed;
+    display: inline-table;
+    background-color: var(--darkBlue);
+    border: 1px solid var(--border);
+    float: left;
+}
+
+#deleteButton {
+    border: 0px;
+    width: 100px;
+    color: var(--purple);
+    background-color: inherit;
+    cursor: pointer;
+}
+
+#footer {
+    display:inline-block;
+    border: 0px solid var(--border);
+    padding: 10px;
+}
+
+/* CLASSES */
+
+#banner {
+    box-shadow: 1px 1px 4px var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    height: 100px;
+    width: 300px;
+}
+
+.close {
+    position:absolute;
+    float:right;
+    top: 5px;
+    right: 10px;
+    cursor:hand;
+    width: 30px;
+    font-weight: bold;
+}
+
+.bgImage {
+    text-align: center;
+    background-image: url("/images/bgDark.jpg");
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+.bgHome {
+    text-align: center;
+    background-image: url("/images/bgDark.jpg");
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+.loadingPicture { filter: grayscale(100%); }
+
+.subject    { color: var(--purple); }
+
+.info       { color: var(--blue); }
+
+.redtext    { color: var(--red); }
+
+.adminLogo  { color: purple; }
+
+.modLogo    { color: red; }
+
+.userLogo   { color: orange; }
+
+.redstar    {
+    width: 15px;
+    height: 15px;
+}
+
+.userName   { color: var(--blue); }
+
+.topSpacing { height: 40px; }
+
+.hidevideo  { display:none; }
+
+.showvideo  { display:block; }
+
+.arrow      { color: var(--blue); } /*expand thread arrow*/
+
+.linksToReplies { font-size: 8pt; }
+
+.boards {
+    text-align: center;
+    font-weight: bold;
+    height:30px;
+    line-height: 30px;
+    color: var(--green);
+    overflow: hidden;
+    display: inline;
+}
+
+.catalog:hover {
+    background-color: var(--darkBlue);
+}
+
+.santahat {
+    height: 60px;
+    width: 70px;
+    z-index: 1;
+    position: absolute;
+    left:0px;
+}
+
+.homePageImageLink {
+    width: 120px;
+    height: 120px;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.homePageImage {
+    width: 120px;
+    height: 120px;
+}
+
+.homePageSection {
+    font-weight: bold;
+    font-size: 25px;
+    text-shadow: 1px 1px 4px var(--blue);"
+}
+
+.homePageCommentLink {
+    background-color: var(--darkBlue);
+    box-shadow: 1px 1px 4px var(--blue);
+    text-shadow: 0px 0px 0px var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    margin: 3px;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.homePageCommentLink:hover {
+    box-shadow: 1px 1px 8px var(--blue);
+}
+
+.homePageComment {
+    color: var(--blue);
+}
+
+.pageButton {
+    height:30px;
+    width:30px;
+    color: var(--green);
+    background-color: var(--darkBlue);
+    border: 1px solid var(--green);
+}
+
+.pageButton:hover {
+    background-color: var(--darkBlue);
+}
+
+.catalog {
+    margin: 5px;
+    padding: 5px;
+    vertical-align:text-top;
+    display: inline-block;
+    text-align: center;
+    height:300px;
+    width:14%;
+    color: var(--window);
+    overflow: hidden;
+    border: 1px solid var(--darkBlue);
+    border-radius: 5px;
+}
+
+.post {
+    background-color: var(--darkBlue);
+    font-size: 10pt;
+    box-shadow: 1px 1px 4px var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+    margin-left: 50px;
+    max-width: 99%;
+    word-break: break-word;
+}
+
+.op {
+    /* QUESTA CLASSE DEVE STARE DOPO LA CLASSE .POST */
+    /*background-color: transparent;*/
+    background-color: var(--black);
+    margin-left: 5px;
+}
+
+.modBtn:hover {
+    background-color: var(--misc-hover);
+}
+
+.modInput {
+    text-align: center;
+    margin: 2px;
+    width: 200px;
+    border: 1px solid var(--blue);
+}
+
+.modBtn {
+    margin: 2px;
+    width: 200px;
+}
+
+.snowflake {
+  color: #fff;
+  font-size: 1em;
+  font-family: Arial;
+  text-shadow: 0 0 1px #000;
+}
+@-webkit-keyframes snowflakes-fall{0%{top:-10%}100%{top:100%}}@-webkit-keyframes snowflakes-shake{0%{-webkit-transform:translateX(0px);transform:translateX(0px)}50%{-webkit-transform:translateX(80px);transform:translateX(80px)}100%{-webkit-transform:translateX(0px);transform:translateX(0px)}}@keyframes snowflakes-fall{0%{top:-10%}100%{top:100%}}@keyframes snowflakes-shake{0%{transform:translateX(0px)}50%{transform:translateX(80px)}100%{transform:translateX(0px)}}.snowflake{position:fixed;top:-10%;z-index:9999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;-webkit-animation-name:snowflakes-fall,snowflakes-shake;-webkit-animation-duration:10s,3s;-webkit-animation-timing-function:linear,ease-in-out;-webkit-animation-iteration-count:infinite,infinite;-webkit-animation-play-state:running,running;animation-name:snowflakes-fall,snowflakes-shake;animation-duration:10s,3s;animation-timing-function:linear,ease-in-out;animation-iteration-count:infinite,infinite;animation-play-state:running,running}.snowflake:nth-of-type(0){left:1%;-webkit-animation-delay:0s,0s;animation-delay:0s,0s}.snowflake:nth-of-type(1){left:10%;-webkit-animation-delay:1s,1s;animation-delay:1s,1s}.snowflake:nth-of-type(2){left:20%;-webkit-animation-delay:6s,.5s;animation-delay:6s,.5s}.snowflake:nth-of-type(3){left:30%;-webkit-animation-delay:4s,2s;animation-delay:4s,2s}.snowflake:nth-of-type(4){left:40%;-webkit-animation-delay:2s,2s;animation-delay:2s,2s}.snowflake:nth-of-type(5){left:50%;-webkit-animation-delay:8s,3s;animation-delay:8s,3s}.snowflake:nth-of-type(6){left:60%;-webkit-animation-delay:6s,2s;animation-delay:6s,2s}.snowflake:nth-of-type(7){left:70%;-webkit-animation-delay:2.5s,1s;animation-delay:2.5s,1s}.snowflake:nth-of-type(8){left:80%;-webkit-animation-delay:1s,0s;animation-delay:1s,0s}.snowflake:nth-of-type(9){left:90%;-webkit-animation-delay:3s,1.5s;animation-delay:3s,1.5s}
+
